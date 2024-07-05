@@ -27,20 +27,6 @@ export class FireBulletArea extends Component {
                     bulletNode.active = true;
                     const bulletCommand = new FireBulletCommand(event.getUILocation(), this.rightFish, bulletNode);
                     bulletCommand.execute();
-
-                    const crabMediator = this.leftFish.getComponent(CrabMediator);
-                    const piranhaMedaitor = this.rightFish.getComponent(PiranhaMediator);
-                    const beginPos = new Vec3(crabMediator.node.position);
-
-                    const targetPos = this.rightFish.parent.getComponent(UITransform).convertToNodeSpaceAR(this.rightFish.worldPosition);
-                    const x = targetPos.x - this.rightFish.getComponent(UITransform).contentSize.width * Math.abs(this.rightFish.scale.x);
-                    const y = targetPos.y
-                    
-                    const moveTo = new MoveCommand(crabMediator, new Vec3(x, y, 0));
-                    const attack = new AttackCommand(crabMediator, piranhaMedaitor);
-                    const moveBack = new MoveCommand(crabMediator, beginPos);
-                    const commandQueue = new CommandQueue([moveTo, attack, moveBack]);
-                    commandQueue.execute();
                 }
             });
         }, this);

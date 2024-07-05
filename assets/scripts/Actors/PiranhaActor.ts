@@ -1,8 +1,9 @@
 import { prianha } from "../Data/Piranha";
-import { Actor } from "./Actor";
+import { Actor, ActorId } from "./Actor";
 
 export class PrianhaActor extends Actor {
-    fetchActor(): void {
+    public override fetchActor(): void {
+        this.id = ActorId.generateActorId();
         this.name = prianha.name;
         this.hp = prianha.hp;
         this.attackShake = prianha.attackShake;

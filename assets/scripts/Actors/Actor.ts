@@ -1,9 +1,20 @@
+export class ActorId {
+
+    static _id: number = 0;
+
+    static generateActorId(): number {
+
+        this._id++;
+        return this._id;
+    }
+}
+
 export class Actor {
 
     /**
      * 从表里读取和初始化数据
      */
-    fetchActor() {
+    public fetchActor(): void {
     }
 
     /**

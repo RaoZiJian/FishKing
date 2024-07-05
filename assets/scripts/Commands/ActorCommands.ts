@@ -1,5 +1,5 @@
 import { tween, UIOpacity, Vec3 } from 'cc';
-import { ActorStateMichine, CharacterState } from '../StateMachine/ActorStateMichine';
+import { CharacterState } from '../StateMachine/ActorStateMachine';
 import { Command } from './Command';
 import { Mediator } from '../Mediator/Mediator';
 import { Constants } from '../Constants';
@@ -20,6 +20,15 @@ export class ActorCommands extends Command {
 }
 
 export class MoveCommand extends ActorCommands {
+
+    private _time: number = 0;
+    public get time(): number {
+        return this._time;
+    }
+    public set time(value: number) {
+        this._time = value;
+    }
+
     private _targePos: Vec3;
     public get targePos(): Vec3 {
         return this._targePos;
@@ -28,16 +37,19 @@ export class MoveCommand extends ActorCommands {
         this._targePos = value;
     }
 
-    constructor(mediator: Mediator, targetPos: Vec3) {
+    constructor(mediator: Mediator, targetPos: Vec3, time: number) {
         super(mediator);
         this.targePos = targetPos;
+        this.time = time;
+        this.duration = this.time;
     }
 
     execute(): void {
         this.mediator.changeState(CharacterState.WALKING);
         tween(this.mediator.node)
-            .to(Constants.AttakingWalkTime, { position: this.targePos })
+            .to(this.time, { position: this.targePos })
             .call(() => {
+                this.mediator.changeState(CharacterState.IDLE);
                 this.complete();
             })
             .start();
@@ -57,11 +69,12 @@ export class AttackCommand extends ActorCommands {
     constructor(attacker: Mediator, target: Mediator) {
         super(attacker);
         this.defender = target;
+        this.duration = this.mediator.getAnimationDuration(CharacterState.ATTACKING) + this.mediator.actor.attackShake;
     }
 
     execute(): void {
         this.mediator.changeState(CharacterState.ATTACKING);
-        const attackDuration = (this.mediator.getAnimationDuration(CharacterState.ATTACKING) + this.mediator.actor.attackShake) * 1000;
+        const attackDuration = this.duration * 1000;
         setTimeout(() => {
             this.complete();
         }, attackDuration);
@@ -86,6 +99,7 @@ export class HurtCommand extends ActorCommands {
     constructor(attack: Mediator, defender: Mediator) {
         super(defender);
         this.attacker = attack;
+        this.duration = this.mediator.getAnimationDuration(CharacterState.HURT);
     }
 
     execute(): void {
@@ -96,11 +110,12 @@ export class HurtCommand extends ActorCommands {
         const currentHp = (hp - lostHp) > 0 ? hp - lostHp : 0;
         this.mediator.setHP(currentHp);
         this.mediator.changeState(CharacterState.HURT);
-        const hurtDuration = this.mediator.getAnimationDuration(CharacterState.HURT) * 1000;
+        const hurtDuration = this.duration * 1000;
+
         setTimeout(() => {
             if (currentHp > 0) {
                 this.mediator.changeState(CharacterState.IDLE);
-            }else{
+            } else {
                 const deadCommand = new DeadCommand(this.mediator);
                 deadCommand.execute();
             }
@@ -112,13 +127,16 @@ export class HurtCommand extends ActorCommands {
 export class DeadCommand extends ActorCommands {
     constructor(deadActor: Mediator) {
         super(deadActor);
+        this.duration = this.mediator.getAnimationDuration(CharacterState.DYING);
     }
 
     execute(): void {
+        this.mediator.changeState(CharacterState.DYING);
         const uiopacity = this.mediator.getComponent(UIOpacity);
+        this.mediator.isAlive = false;
         if (uiopacity) {
             tween(uiopacity)
-                .to(1, { opacity: 0 })
+                .to(this.duration, { opacity: 0 })
                 .call(() => {
                     this.complete();
                 })

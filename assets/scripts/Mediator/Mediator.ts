@@ -1,6 +1,6 @@
 import { _decorator, Component, Node, ProgressBar } from 'cc';
 import { Actor } from '../Actors/Actor';
-import { ActorStateMichine, CharacterState } from '../StateMachine/ActorStateMichine';
+import { ActorStateMichine, CharacterState } from '../StateMachine/ActorStateMachine';
 const { ccclass, property } = _decorator;
 
 @ccclass('Mediator')
@@ -78,6 +78,9 @@ export class Mediator extends Component {
             case CharacterState.WALKING:
                 this.walk();
                 break;
+            case CharacterState.DYING:
+                this.dying();
+                break;
             default:
                 break;
         }
@@ -108,6 +111,10 @@ export class Mediator extends Component {
                 this.changeState(CharacterState.IDLE);
             }
         }, duration)
+    }
+
+    dying() {
+        this.stateMachine.changeState(CharacterState.DYING);
     }
 
     start() {

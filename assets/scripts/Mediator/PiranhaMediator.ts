@@ -7,9 +7,14 @@ const { ccclass, property } = _decorator;
 
 @ccclass('PiranhaMediator')
 export class PiranhaMediator extends Mediator {
+
+    protected onLoad(): void {
+        this.actor = new PrianhaActor();
+        this.actor.fetchActor();
+    }
+
     start() {
         this.stateMachine = this.getComponentInChildren(PiranhaActorStateMachine)
-        this.actor = new PrianhaActor();
     }
 
     protected updateHpBar(): void {

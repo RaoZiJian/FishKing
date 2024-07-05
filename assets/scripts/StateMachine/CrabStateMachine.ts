@@ -1,5 +1,5 @@
-import { _decorator, Component, Node } from 'cc';
-import { ActorStateMichine, CharacterState } from './ActorStateMichine';
+import { _decorator } from 'cc';
+import { ActorStateMichine, CharacterState } from './ActorStateMachine';
 const { ccclass, property } = _decorator;
 
 @ccclass('CrabStateMachine')
@@ -9,7 +9,7 @@ export class CrabStateMachine extends ActorStateMichine {
     }
 
     update(deltaTime: number) {
-        
+
     }
 }
 

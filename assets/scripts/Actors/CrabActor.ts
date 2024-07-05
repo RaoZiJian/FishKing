@@ -1,8 +1,9 @@
 import { crab } from "../Data/Crab";
-import { Actor } from "./Actor";
+import { Actor, ActorId } from "./Actor";
 
 export class CrabActor extends Actor {
-    fetchActor(): void {
+    public override fetchActor(): void {
+        this.id = ActorId.generateActorId();
         this.name = crab.name;
         this.hp = crab.hp;
         this.attackShake = crab.attackShake;

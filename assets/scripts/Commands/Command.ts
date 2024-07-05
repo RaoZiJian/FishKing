@@ -12,6 +12,14 @@ export class Command {
         this._isFinished = value;
     }
 
+    private _duration: number = 0;
+    public get duration(): number {
+        return this._duration;
+    }
+    public set duration(value: number) {
+        this._duration = value;
+    }
+
     public onComplete?: () => void;
 
     constructor() {
@@ -37,6 +45,12 @@ export class CommandQueue {
 
     constructor(commands: Command[]) {
         this.commands = commands;
+    }
+
+    addCommand(command: Command) {
+        if (command) {
+            this.commands.push(command);
+        }
     }
 
     execute(): void {
@@ -85,6 +99,7 @@ export class FireBulletCommand extends Command {
         this.start = start;
         this.end = end;
         this.bullet = bullet;
+        this.duration = 0;
     }
 
     execute(): void {
@@ -119,6 +134,7 @@ export class FireBulletExplodeCommand extends Command {
         super();
         this.location = location;
         this.explosion = bomb;
+        this.duration = this.explosion.getComponent(Animation).defaultClip.duration;
     }
 
     execute(): void {

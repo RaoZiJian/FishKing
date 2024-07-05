@@ -2,12 +2,12 @@
   "ver": "2.0.3",
   "importer": "animation-clip",
   "imported": true,
-  "uuid": "ac94d48a-f49b-4321-8baf-5ea33c9b2309",
+  "uuid": "9769013e-41dd-4766-a790-be8d593f2509",
   "files": [
     ".cconb"
   ],
   "subMetas": {},
   "userData": {
-    "name": "attack"
+    "name": "hurt"
   }
 }

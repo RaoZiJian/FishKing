@@ -1,4 +1,4 @@
-import { _decorator, Component, Animation } from 'cc';
+import { _decorator, Component, Animation, log } from 'cc';
 const { ccclass, property } = _decorator;
 
 // Define the states
@@ -8,6 +8,7 @@ export const CharacterState = {
     ATTACKING: 'attacking',
     CASTING: 'casting',
     HURT: 'hurt',
+    DYING: 'dying',
     EMPTY: 'empty',
 };
 
@@ -30,14 +31,22 @@ export class ActorStateMichine extends Component {
         }
     }
 
-    getAnimationDuration(state){
-        const animation = this.animationComponent.clips.find(ani=>ani.name == state)
-        if(animation){
+    getAnimationDuration(state) {
+        const animation = this.animationComponent.clips.find(ani => ani.name == state)
+        if (animation) {
             return animation.duration;
+        }else{
+            return this.animationComponent.defaultClip.duration;
         }
     }
 
     playAnimationForState(state) {
-        this.animationComponent.play(state);
+        let clips = this.animationComponent.clips;
+        if (clips.filter(clip => clip.name == state).length > 0) {
+            this.animationComponent.play(state);
+        } else {
+            this.animationComponent.play(CharacterState.IDLE);
+            log("Cannot find state animation " + state);
+        }
     }
 }
