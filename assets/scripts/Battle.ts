@@ -1,22 +1,25 @@
-import { _decorator, Component, log, Node, UITransform, Vec3 } from 'cc';
-import { Actor } from './Actors/Actor';
+import { _decorator, Canvas, Component, director, instantiate, log, Node, Prefab, resources, UITransform, Vec3 } from 'cc';
 import { Mediator } from './Mediator/Mediator';
 import { Command, CommandQueue } from './Commands/Command';
 import { AttackCommand, MoveCommand } from './Commands/ActorCommands';
 import { Constants } from './Constants';
+import { RES_URL } from './ResourceUrl';
+import { CrabMediator } from './Mediator/CrabMediator';
+import { PiranhaMediator } from './Mediator/PiranhaMediator';
+import { ZhaoYunMediator } from './Mediator/ZhaoYunMediator';
 const { ccclass, property } = _decorator;
 
 @ccclass('Battle')
 export class Battle extends Component {
 
-    @property(Mediator)
-    leftFish: Mediator;
+    @property(Node)
+    leftFish1: Node;
 
-    @property(Mediator)
-    leftFish2: Mediator;
+    @property(Node)
+    leftFish2: Node;
 
-    @property(Mediator)
-    rightFish: Mediator;
+    @property(Node)
+    rightFish1: Node;
 
     private _teamLeft: Array<Mediator> = [];
     public get teamLeft(): Array<Mediator> {
@@ -44,13 +47,45 @@ export class Battle extends Component {
         setTimeout(() => {
             let loopActors = this._getBattleLoopActors();
             this.runBattle(loopActors);
-        }, 1000)
+        }, 2000)
     }
 
     initFishes() {
-        this.teamLeft.push(this.leftFish);
-        this.teamLeft.push(this.leftFish2);
-        this.teamRight.push(this.rightFish);
+        let canvas = director.getScene().getComponentInChildren(Canvas);
+        let parent = canvas.node.getChildByName('MyFishes');
+        resources.load(RES_URL.crabActor, Prefab, (error, prefab) => {
+            if (prefab) {
+                let actor = instantiate(prefab);
+                if (actor) {
+                    parent.addChild(actor);
+                    actor.position = this.leftFish1.position;
+                    this.teamLeft.push(actor.getComponent(CrabMediator));
+                }
+            }
+        });
+
+        resources.load(RES_URL.piranhaActor, Prefab, (error, prefab) => {
+            if (prefab) {
+                let actor = instantiate(prefab);
+                if (actor) {
+                    parent.addChild(actor);
+                    actor.position = this.rightFish1.position;
+                    actor.scale = new Vec3(actor.scale.x * -1, actor.scale.y, actor.scale.z);
+                    this.teamRight.push(actor.getComponent(PiranhaMediator));
+                }
+            }
+        });
+
+        resources.load(RES_URL.zhaoYunActor, Prefab, (error, prefab) => {
+            if (prefab) {
+                let actor = instantiate(prefab);
+                if (actor) {
+                    parent.addChild(actor);
+                    actor.position = this.leftFish2.position;
+                    this.teamLeft.push(actor.getComponent(ZhaoYunMediator));
+                }
+            }
+        });
     }
 
     getAliveActors(team: Array<Mediator>) {

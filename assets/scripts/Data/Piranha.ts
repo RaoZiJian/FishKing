@@ -2,7 +2,7 @@ export const prianha = {
     name: 'crab',
     attackShake: 0.1,
     attackAfterShake: 0.1,
-    attack: 80,
+    attack: 120,
     hp: 100,
     rage: 100,
     defense: 10,
