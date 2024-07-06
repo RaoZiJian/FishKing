@@ -1,0 +1,134 @@
+{
+  "ver": "1.0.27",
+  "importer": "image",
+  "imported": true,
+  "uuid": "baad7c49-c338-4c5a-b99a-89b9cb7e473a",
+  "files": [
+    ".json",
+    ".png"
+  ],
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "baad7c49-c338-4c5a-b99a-89b9cb7e473a@6c48a",
+      "displayName": "0_Dark_Elves_Throwing in The Air_010",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "clamp-to-edge",
+        "wrapModeT": "clamp-to-edge",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "baad7c49-c338-4c5a-b99a-89b9cb7e473a",
+        "visible": false
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f9941": {
+      "importer": "sprite-frame",
+      "uuid": "baad7c49-c338-4c5a-b99a-89b9cb7e473a@f9941",
+      "displayName": "0_Dark_Elves_Throwing in The Air_010",
+      "id": "f9941",
+      "name": "spriteFrame",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": -56,
+        "offsetY": 19,
+        "trimX": 187,
+        "trimY": 149,
+        "width": 414,
+        "height": 564,
+        "rawWidth": 900,
+        "rawHeight": 900,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [
+            -207,
+            -282,
+            0,
+            207,
+            -282,
+            0,
+            -207,
+            282,
+            0,
+            207,
+            282,
+            0
+          ],
+          "indexes": [
+            0,
+            1,
+            2,
+            2,
+            1,
+            3
+          ],
+          "uv": [
+            187,
+            751,
+            601,
+            751,
+            187,
+            187,
+            601,
+            187
+          ],
+          "nuv": [
+            0.20777777777777778,
+            0.20777777777777778,
+            0.6677777777777778,
+            0.20777777777777778,
+            0.20777777777777778,
+            0.8344444444444444,
+            0.6677777777777778,
+            0.8344444444444444
+          ],
+          "minPos": [
+            -207,
+            -282,
+            0
+          ],
+          "maxPos": [
+            207,
+            282,
+            0
+          ]
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "baad7c49-c338-4c5a-b99a-89b9cb7e473a@6c48a",
+        "atlasUuid": ""
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "hasAlpha": true,
+    "type": "sprite-frame",
+    "fixAlphaTransparencyArtifacts": false,
+    "redirect": "baad7c49-c338-4c5a-b99a-89b9cb7e473a@6c48a"
+  }
+}

@@ -4,5 +4,7 @@ export const RES_URL = {
     clickBulletExplode: 'effects/explosion/bulletExplode',
     piranhaActor: 'fishes/Piranha/PiranhaActor',
     crabActor: 'fishes/Crab/CrabActor',
-    zhaoYunActor: 'fishes/ZhaoYun/ZhaoYunActor'
+    zhaoYunActor: 'fishes/ZhaoYun/ZhaoYunActor',
+    lvMengActor:'fishes/LvMeng/LvMengActor',
+    octopusActor:'fishes/Octopus/OctopusActor',
 }

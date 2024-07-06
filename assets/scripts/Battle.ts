@@ -7,6 +7,8 @@ import { RES_URL } from './ResourceUrl';
 import { CrabMediator } from './Mediator/CrabMediator';
 import { PiranhaMediator } from './Mediator/PiranhaMediator';
 import { ZhaoYunMediator } from './Mediator/ZhaoYunMediator';
+import { LvMengMediator } from './Mediator/LvMengMediator';
+import { OctopusMediator } from './Mediator/OctopusMediator';
 const { ccclass, property } = _decorator;
 
 @ccclass('Battle')
@@ -19,7 +21,13 @@ export class Battle extends Component {
     leftFish2: Node;
 
     @property(Node)
+    leftFish3: Node;
+
+    @property(Node)
     rightFish1: Node;
+
+    @property(Node)
+    rightFish2: Node;
 
     private _teamLeft: Array<Mediator> = [];
     public get teamLeft(): Array<Mediator> {
@@ -42,15 +50,16 @@ export class Battle extends Component {
         return this._commandLog;
     }
 
+    private _resourceLoaded: number = 0;
+    private _allPrefabs: number = 0;
+    private _battleNotBegin: boolean = true;
+
     start() {
         this.initFishes();
-        setTimeout(() => {
-            let loopActors = this._getBattleLoopActors();
-            this.runBattle(loopActors);
-        }, 2000)
     }
 
     initFishes() {
+        this._allPrefabs = 5;
         let canvas = director.getScene().getComponentInChildren(Canvas);
         let parent = canvas.node.getChildByName('MyFishes');
         resources.load(RES_URL.crabActor, Prefab, (error, prefab) => {
@@ -60,6 +69,7 @@ export class Battle extends Component {
                     parent.addChild(actor);
                     actor.position = this.leftFish1.position;
                     this.teamLeft.push(actor.getComponent(CrabMediator));
+                    this._resourceLoaded++;
                 }
             }
         });
@@ -70,8 +80,10 @@ export class Battle extends Component {
                 if (actor) {
                     parent.addChild(actor);
                     actor.position = this.rightFish1.position;
-                    actor.scale = new Vec3(actor.scale.x * -1, actor.scale.y, actor.scale.z);
-                    this.teamRight.push(actor.getComponent(PiranhaMediator));
+                    let medaitor = actor.getComponent(PiranhaMediator);
+                    medaitor.setDireactionReverse();
+                    this.teamRight.push(medaitor);
+                    this._resourceLoaded++;
                 }
             }
         });
@@ -83,6 +95,33 @@ export class Battle extends Component {
                     parent.addChild(actor);
                     actor.position = this.leftFish2.position;
                     this.teamLeft.push(actor.getComponent(ZhaoYunMediator));
+                    this._resourceLoaded++;
+                }
+            }
+        });
+
+        resources.load(RES_URL.lvMengActor, Prefab, (error, prefab) => {
+            if (prefab) {
+                let actor = instantiate(prefab);
+                if (actor) {
+                    parent.addChild(actor);
+                    actor.position = this.leftFish3.position;
+                    this.teamLeft.push(actor.getComponent(LvMengMediator));
+                    this._resourceLoaded++;
+                }
+            }
+        });
+
+        resources.load(RES_URL.octopusActor, Prefab, (error, prefab) => {
+            if (prefab) {
+                let actor = instantiate(prefab);
+                if (actor) {
+                    parent.addChild(actor);
+                    actor.position = this.rightFish2.position;
+                    let medaitor = actor.getComponent(OctopusMediator);
+                    medaitor.setDireactionReverse();
+                    this.teamRight.push(medaitor);
+                    this._resourceLoaded++;
                 }
             }
         });
@@ -161,7 +200,13 @@ export class Battle extends Component {
     }
 
     update(deltaTime: number) {
-
+        if (this._allPrefabs == this._resourceLoaded) {
+            if(this._battleNotBegin){
+                let loopActors = this._getBattleLoopActors();
+                this.runBattle(loopActors);
+                this._battleNotBegin = false;
+            }
+        }
     }
 }
 

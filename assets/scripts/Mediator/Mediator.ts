@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, ProgressBar } from 'cc';
+import { _decorator, Component, Node, ProgressBar, Vec3 } from 'cc';
 import { Actor } from '../Actors/Actor';
 import { ActorStateMichine, CharacterState } from '../StateMachine/ActorStateMachine';
 const { ccclass, property } = _decorator;
@@ -45,6 +45,15 @@ export class Mediator extends Component {
             this.actor.hp = value;
             this.updateHpBar();
         }
+    }
+
+    /**
+     * 默认朝向向右，如果需要单位向左，需要调用此方法
+     */
+    setDireactionReverse(){
+        this.node.scale = new Vec3(this.node.scale.x * -1, this.node.scale.y, this.node.scale.z);
+        this.hpBar.reverse = true;
+        this.rageBar.reverse = true;
     }
 
     protected updateHpBar(): void {
