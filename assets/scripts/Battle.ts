@@ -9,6 +9,7 @@ import { PiranhaMediator } from './Mediator/PiranhaMediator';
 import { ZhaoYunMediator } from './Mediator/ZhaoYunMediator';
 import { LvMengMediator } from './Mediator/LvMengMediator';
 import { OctopusMediator } from './Mediator/OctopusMediator';
+import { ZhangLiaoMediator } from './Mediator/ZhangLiaoMediator';
 const { ccclass, property } = _decorator;
 
 @ccclass('Battle')
@@ -28,6 +29,9 @@ export class Battle extends Component {
 
     @property(Node)
     rightFish2: Node;
+
+    @property(Node)
+    rightFish3: Node;
 
     private _teamLeft: Array<Mediator> = [];
     public get teamLeft(): Array<Mediator> {
@@ -59,7 +63,7 @@ export class Battle extends Component {
     }
 
     initFishes() {
-        this._allPrefabs = 5;
+        this._allPrefabs = 6;
         let canvas = director.getScene().getComponentInChildren(Canvas);
         let parent = canvas.node.getChildByName('MyFishes');
         resources.load(RES_URL.crabActor, Prefab, (error, prefab) => {
@@ -119,6 +123,20 @@ export class Battle extends Component {
                     parent.addChild(actor);
                     actor.position = this.rightFish2.position;
                     let medaitor = actor.getComponent(OctopusMediator);
+                    medaitor.setDireactionReverse();
+                    this.teamRight.push(medaitor);
+                    this._resourceLoaded++;
+                }
+            }
+        });
+
+        resources.load(RES_URL.zhangliaoActor, Prefab, (error, prefab) => {
+            if (prefab) {
+                let actor = instantiate(prefab);
+                if (actor) {
+                    parent.addChild(actor);
+                    actor.position = this.rightFish3.position;
+                    let medaitor = actor.getComponent(ZhangLiaoMediator);
                     medaitor.setDireactionReverse();
                     this.teamRight.push(medaitor);
                     this._resourceLoaded++;

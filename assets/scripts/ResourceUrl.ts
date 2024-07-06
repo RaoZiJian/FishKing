@@ -5,6 +5,7 @@ export const RES_URL = {
     piranhaActor: 'fishes/Piranha/PiranhaActor',
     crabActor: 'fishes/Crab/CrabActor',
     zhaoYunActor: 'fishes/ZhaoYun/ZhaoYunActor',
-    lvMengActor:'fishes/LvMeng/LvMengActor',
-    octopusActor:'fishes/Octopus/OctopusActor',
+    lvMengActor: 'fishes/LvMeng/LvMengActor',
+    octopusActor: 'fishes/Octopus/OctopusActor',
+    zhangliaoActor: 'fishes/ZhangLiao/ZhangLiaoActor',
 }

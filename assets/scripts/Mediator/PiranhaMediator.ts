@@ -7,7 +7,6 @@ const { ccclass, property } = _decorator;
 
 @ccclass('PiranhaMediator')
 export class PiranhaMediator extends Mediator {
-
     protected onLoad(): void {
         this.actor = new PrianhaActor();
         this.actor.fetchActor();
@@ -26,6 +25,7 @@ export class PiranhaMediator extends Mediator {
         const percent = this.actor.rage / prianha.rage;
         this.rageBar.progress = percent;
     }
+
     update(deltaTime: number) {
 
     }
