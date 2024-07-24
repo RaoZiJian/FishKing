@@ -1,3 +1,5 @@
+import { SkillData } from "../Data/SkillData";
+
 export class ActorId {
 
     static _id: number = 0;
@@ -273,4 +275,38 @@ export class Actor {
     public set precise(value: number) {
         this._precise = value;
     }
+
+    /**
+     * 嘲讽值
+     */
+    private _taunt: number = 0;
+    public get taunt(): number {
+        return this._taunt;
+    }
+    public set taunt(value: number) {
+        this._taunt = value;
+    }
+
+    /**
+     * 技能列表
+     */
+    private _passiveSkills: SkillData[];
+    public get passiveSkills(): SkillData[] {
+        return this._passiveSkills;
+    }
+    public set passiveSkills(value: SkillData[]) {
+        this._passiveSkills = value;
+    }
+
+    /**
+     * 主要技能（主动技能）
+     */
+    private _mainSkill: SkillData;
+    public get mainSkill(): SkillData {
+        return this._mainSkill;
+    }
+    public set mainSkill(value: SkillData) {
+        this._mainSkill = value;
+    }
+
 }

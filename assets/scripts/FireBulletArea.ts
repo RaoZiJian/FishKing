@@ -37,4 +37,3 @@ export class FireBulletArea extends Component {
     }
 }
 
-

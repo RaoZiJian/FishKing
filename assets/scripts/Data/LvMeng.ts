@@ -1,3 +1,5 @@
+import { skillDataList } from "./SkillData";
+
 export const lvmeng = {
     name: 'lvmeng',
     attackShake: 0.1,
@@ -20,5 +22,7 @@ export const lvmeng = {
     controlHit: 0,
     controlResistance: 0,
     gridBlock: 0,
-    precise: 0
+    precise: 0,
+    taunt: 50,
+    mainSkill:10002
 }

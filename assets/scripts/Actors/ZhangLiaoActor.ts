@@ -1,3 +1,4 @@
+import { skillDataList } from "../Data/SkillData";
 import { zhangliao } from "../Data/ZhangLiao";
 import { Actor, ActorId } from "./Actor";
 
@@ -26,6 +27,12 @@ export class ZhangLiaoActor extends Actor {
         this.controlResistance = zhangliao.controlResistance;
         this.gridBlock = zhangliao.gridBlock;
         this.precise = zhangliao.precise;
+        this.taunt = zhangliao.taunt;
+        const mainSkillId = zhangliao.mainSkill;
+        let searchMainSkill = skillDataList.filter((skill) => skill.Id == mainSkillId)
+        if (searchMainSkill.length > 0) {
+            this.mainSkill = searchMainSkill[0];
+        }
     }
 }
 

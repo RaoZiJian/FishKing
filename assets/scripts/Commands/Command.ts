@@ -12,7 +12,11 @@ export class Command {
         this._isFinished = value;
     }
 
+
     private _duration: number = 0;
+    /**
+     * 命令持续时间
+     */
     public get duration(): number {
         return this._duration;
     }
@@ -21,10 +25,6 @@ export class Command {
     }
 
     public onComplete?: () => void;
-
-    constructor() {
-
-    }
 
     execute(): void {
 

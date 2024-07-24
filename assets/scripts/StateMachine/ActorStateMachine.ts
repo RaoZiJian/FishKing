@@ -1,4 +1,6 @@
 import { _decorator, Component, Animation, log } from 'cc';
+import { Mediator } from '../Mediator/Mediator';
+import { MainSkillFactory } from '../Skill/MainSkillFactory';
 const { ccclass, property } = _decorator;
 
 // Define the states
@@ -21,13 +23,24 @@ export class ActorStateMichine extends Component {
 
     currentState: string = CharacterState.EMPTY;
 
+    private _mediator: Mediator;
+    public get mediator(): Mediator {
+        return this._mediator;
+    }
+    public set mediator(value: Mediator) {
+        this._mediator = value;
+    }
+
     start() {
+
     }
 
     changeState(newState) {
         if (this.currentState !== newState) {
             this.currentState = newState;
-            this.playAnimationForState(newState);
+            if (this.currentState != CharacterState.CASTING) {
+                this.playAnimationForState(newState);
+            }
         }
     }
 
@@ -35,10 +48,16 @@ export class ActorStateMichine extends Component {
         const animation = this.animationComponent.clips.find(ani => ani.name == state)
         if (animation) {
             return animation.duration;
-        }else{
+        } else {
             return this.animationComponent.defaultClip.duration;
         }
     }
+
+    castingMainSkill(target: Mediator) {
+        let mainSkill = MainSkillFactory.createMainSkill(this.mediator.actor.mainSkill, this.mediator, [target]);
+        mainSkill.useSkill();
+    }
+
 
     playAnimationForState(state) {
         let clips = this.animationComponent.clips;

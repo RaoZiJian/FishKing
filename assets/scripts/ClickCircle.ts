@@ -11,8 +11,8 @@ export class ClickCircle extends Component {
     private _effectOpacity: UIOpacity;
 
     private _clickAnimation: Animation;
-    start() {
 
+    protected onLoad(): void {
         this._clickNode = new Node('clickEffect');
         this.node.addChild(this._clickNode);
         resources.load(RES_URL.clickEffect, Prefab, (error, prefab) => {
@@ -36,7 +36,9 @@ export class ClickCircle extends Component {
                 }, this);
             }
         })
+    }
 
+    start() {
         this.node.on(Node.EventType.MOUSE_DOWN, (event) => {
             let location = event.getUILocation();
             this._clickNode.setWorldPosition(new Vec3(location.x, location.y, 0));

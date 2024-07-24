@@ -11,6 +11,9 @@ export class LvMengStateMachine extends ActorStateMichine {
     update(deltaTime: number) {
         
     }
+
+    protected playAnimationForCasting(): void {
+    }
 }
 
 

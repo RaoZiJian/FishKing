@@ -20,5 +20,6 @@ export const prianha = {
     controlHit: 0,
     controlResistance: 0,
     gridBlock: 0,
-    precise: 0
+    precise: 0,
+    taunt: 5,
 }

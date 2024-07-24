@@ -20,5 +20,7 @@ export const zhaoyun = {
     controlHit: 0,
     controlResistance: 0,
     gridBlock: 0,
-    precise: 0
+    precise: 0,
+    taunt: 95,
+    mainSkill:10001
 }

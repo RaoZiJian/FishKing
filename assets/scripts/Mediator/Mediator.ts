@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, ProgressBar, Vec3 } from 'cc';
 import { Actor } from '../Actors/Actor';
 import { ActorStateMichine, CharacterState } from '../StateMachine/ActorStateMachine';
+import { EffectTarget } from '../Skill/EffectTarget';
 const { ccclass, property } = _decorator;
 
 @ccclass('Mediator')
@@ -22,12 +23,28 @@ export class Mediator extends Component {
         this._stateMachine = value;
     }
 
+    private _effectTarget: EffectTarget;
+    public get effectTarget(): EffectTarget {
+        return this._effectTarget;
+    }
+    public set effectTarget(value: EffectTarget) {
+        this._effectTarget = value;
+    }
+
     private _isAlive: boolean = true;
     public get isAlive(): boolean {
         return this._isAlive;
     }
     public set isAlive(value: boolean) {
         this._isAlive = value;
+    }
+
+    private _isDirecationReverse: boolean;
+    public get isDirecationReverse(): boolean {
+        return this._isDirecationReverse;
+    }
+    public set isDirecationReverse(value: boolean) {
+        this._isDirecationReverse = value;
     }
 
     @property(ProgressBar)
@@ -50,10 +67,11 @@ export class Mediator extends Component {
     /**
      * 默认朝向向右，如果需要单位向左，需要调用此方法
      */
-    setDireactionReverse(){
+    setDireactionReverse() {
         this.node.scale = new Vec3(this.node.scale.x * -1, this.node.scale.y, this.node.scale.z);
         this.hpBar.reverse = true;
         this.rageBar.reverse = true;
+        this.isDirecationReverse = true;
     }
 
     protected updateHpBar(): void {
@@ -95,7 +113,6 @@ export class Mediator extends Component {
         }
     }
 
-    // Example methods to change state
     idle() {
         this.stateMachine.changeState(CharacterState.IDLE);
     }

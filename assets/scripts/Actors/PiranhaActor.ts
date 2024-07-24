@@ -26,6 +26,7 @@ export class PrianhaActor extends Actor {
         this.controlResistance = prianha.controlResistance;
         this.gridBlock = prianha.gridBlock;
         this.precise = prianha.precise;
+        this.taunt = prianha.taunt;
     }
 }
 

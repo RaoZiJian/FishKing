@@ -1,4 +1,5 @@
 import { octopus } from "../Data/Octopus";
+import { skillDataList } from "../Data/SkillData";
 import { Actor, ActorId } from "./Actor";
 
 export class octopusActor extends Actor {
@@ -26,6 +27,12 @@ export class octopusActor extends Actor {
         this.controlResistance = octopus.controlResistance;
         this.gridBlock = octopus.gridBlock;
         this.precise = octopus.precise;
+        this.taunt = octopus.taunt;
+        const mainSkillId = octopus.mainSkill;
+        let searchMainSkill = skillDataList.filter((skill) => skill.Id == mainSkillId)
+        if (searchMainSkill.length > 0) {
+            this.mainSkill = searchMainSkill[0];
+        }
     }
 }
 

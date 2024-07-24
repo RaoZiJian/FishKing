@@ -3,8 +3,10 @@ import { CharacterState } from '../StateMachine/ActorStateMachine';
 import { Command } from './Command';
 import { Mediator } from '../Mediator/Mediator';
 import { Constants } from '../Constants';
+import { MainSkill } from '../Skill/MainSkill';
 
-export class ActorCommands extends Command {
+export class MoveCommand extends Command {
+
     private _mediator: Mediator;
     public get mediator(): Mediator {
         return this._mediator;
@@ -12,14 +14,6 @@ export class ActorCommands extends Command {
     public set mediator(value: Mediator) {
         this._mediator = value;
     }
-
-    constructor(mediator: Mediator) {
-        super();
-        this.mediator = mediator;
-    }
-}
-
-export class MoveCommand extends ActorCommands {
 
     private _time: number = 0;
     public get time(): number {
@@ -38,7 +32,8 @@ export class MoveCommand extends ActorCommands {
     }
 
     constructor(mediator: Mediator, targetPos: Vec3, time: number) {
-        super(mediator);
+        super();
+        this.mediator = mediator;
         this.targePos = targetPos;
         this.time = time;
         this.duration = this.time;
@@ -56,7 +51,15 @@ export class MoveCommand extends ActorCommands {
     }
 }
 
-export class AttackCommand extends ActorCommands {
+export class AttackCommand extends Command {
+
+    private _attacker: Mediator;
+    public get attacker(): Mediator {
+        return this._attacker;
+    }
+    public set attacker(value: Mediator) {
+        this._attacker = value;
+    }
 
     private _defender: Mediator;
     public get defender(): Mediator {
@@ -67,26 +70,40 @@ export class AttackCommand extends ActorCommands {
     }
 
     constructor(attacker: Mediator, target: Mediator) {
-        super(attacker);
+        super();
+        this.attacker = attacker
         this.defender = target;
-        this.duration = this.mediator.getAnimationDuration(CharacterState.ATTACKING) + this.mediator.actor.attackShake;
+        this.duration = this.attacker.getAnimationDuration(CharacterState.ATTACKING) + this.attacker.actor.attackShake;
     }
 
     execute(): void {
-        this.mediator.changeState(CharacterState.ATTACKING);
+        this.attacker.changeState(CharacterState.ATTACKING);
         const attackDuration = this.duration * 1000;
+        const attack = this.attacker.actor.attack;
+        const defence = this.defender.actor.defense;
+        const damage = (attack - defence) > 0 ? attack - defence : 0;
+
         setTimeout(() => {
             this.complete();
         }, attackDuration);
 
         setTimeout(() => {
-            const hurt = new HurtCommand(this.mediator, this.defender);
+            const hurt = new HurtCommand(this.attacker, this.defender, damage);
             hurt.execute();
-        }, this.mediator.getAnimationDuration(CharacterState.ATTACKING) * 0.5 * 1000)
+        }, this.attacker.getAnimationDuration(CharacterState.ATTACKING) * 0.5 * 1000)
     }
 }
 
-export class HurtCommand extends ActorCommands {
+export class HurtCommand extends Command {
+
+    private _defender: Mediator;
+    public get defender(): Mediator {
+        return this._defender;
+    }
+    public set defender(value: Mediator) {
+        this._defender = value;
+    }
+
     private _attacker: Mediator;
     public get attacker(): Mediator {
         return this._attacker;
@@ -95,28 +112,39 @@ export class HurtCommand extends ActorCommands {
         this._attacker = value;
     }
 
+    private _damage: number;
+    public get damage(): number {
+        return this._damage;
+    }
+    public set damage(value: number) {
+        this._damage = value;
+    }
 
-    constructor(attack: Mediator, defender: Mediator) {
-        super(defender);
+    constructor(attack: Mediator, defender: Mediator, damage: number) {
+        super();
+        this.defender = defender
         this.attacker = attack;
-        this.duration = this.mediator.getAnimationDuration(CharacterState.HURT);
+        this.duration = this.defender.getAnimationDuration(CharacterState.HURT);
     }
 
     execute(): void {
         const attack = this.attacker.actor.attack;
-        const defence = this.mediator.actor.defense;
-        const hp = this.mediator.actor.hp;
-        const lostHp = (attack - defence) > 0 ? attack - defence : 0;
-        const currentHp = (hp - lostHp) > 0 ? hp - lostHp : 0;
-        this.mediator.setHP(currentHp);
-        this.mediator.changeState(CharacterState.HURT);
+        const defence = this.defender.actor.defense;
+        // const hp = this.defender.actor.hp;
+        // const lostHp = (attack - defence) > 0 ? attack - defence : 0;
+        // const currentHp = (hp - lostHp) > 0 ? hp - lostHp : 0;
+        // this.defender.setHP(currentHp);
+        const hp = this.defender.actor.hp;
+        const currentHp = (hp - this.damage) > 0 ? hp - this.damage : 0;
+        this.defender.setHP(currentHp);
+        this.defender.changeState(CharacterState.HURT);
         const hurtDuration = this.duration * 1000;
 
         setTimeout(() => {
             if (currentHp > 0) {
-                this.mediator.changeState(CharacterState.IDLE);
+                this.defender.changeState(CharacterState.IDLE);
             } else {
-                const deadCommand = new DeadCommand(this.mediator);
+                const deadCommand = new DeadCommand(this.defender);
                 deadCommand.execute();
             }
             this.complete();
@@ -124,16 +152,26 @@ export class HurtCommand extends ActorCommands {
     }
 }
 
-export class DeadCommand extends ActorCommands {
+export class DeadCommand extends Command {
+
+    private _deadActor: Mediator;
+    public get deadActor(): Mediator {
+        return this._deadActor;
+    }
+    public set deadActor(value: Mediator) {
+        this._deadActor = value;
+    }
+
     constructor(deadActor: Mediator) {
-        super(deadActor);
-        this.duration = this.mediator.getAnimationDuration(CharacterState.DYING);
+        super();
+        this.deadActor = deadActor;
+        this.duration = this.deadActor.getAnimationDuration(CharacterState.DYING);
     }
 
     execute(): void {
-        this.mediator.changeState(CharacterState.DYING);
-        const uiopacity = this.mediator.getComponent(UIOpacity);
-        this.mediator.isAlive = false;
+        this.deadActor.changeState(CharacterState.DYING);
+        const uiopacity = this.deadActor.getComponent(UIOpacity);
+        this.deadActor.isAlive = false;
         if (uiopacity) {
             tween(uiopacity)
                 .to(this.duration, { opacity: 0 })
@@ -142,6 +180,30 @@ export class DeadCommand extends ActorCommands {
                 })
                 .start();
         }
+    }
+}
+
+export class MainSkillCommand extends Command {
+
+    private _skill: MainSkill;
+    public get skill(): MainSkill {
+        return this._skill;
+    }
+    public set skill(value: MainSkill) {
+        this._skill = value;
+    }
+
+    constructor(skill: MainSkill) {
+        super()
+        this.skill = skill;
+        this.duration = skill.duration;
+    }
+
+    execute(): void {
+        this.skill.useSkill();
+        setTimeout(() => {
+            this.complete();
+        }, this.duration * 1000);
     }
 }
 

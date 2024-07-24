@@ -1,4 +1,5 @@
 import { lvmeng } from "../Data/LvMeng";
+import { skillDataList } from "../Data/SkillData";
 import { Actor, ActorId } from "./Actor";
 
 export class LvMengActor extends Actor {
@@ -26,6 +27,12 @@ export class LvMengActor extends Actor {
         this.controlResistance = lvmeng.controlResistance;
         this.gridBlock = lvmeng.gridBlock;
         this.precise = lvmeng.precise;
+        this.taunt = lvmeng.taunt;
+        const mainSkillId = lvmeng.mainSkill;
+        let searchMainSkill = skillDataList.filter((skill) => skill.Id == mainSkillId)
+        if (searchMainSkill.length > 0) {
+            this.mainSkill = searchMainSkill[0];
+        }
     }
 }
 

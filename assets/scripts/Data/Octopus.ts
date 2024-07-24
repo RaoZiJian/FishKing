@@ -6,7 +6,7 @@ export const octopus = {
     hp: 300,
     rage: 100,
     defense: 0,
-    speed: 12,
+    speed: 2,
     damageIncrease: 0,
     damageDecrease: 0,
     skillDamage: 0,
@@ -20,5 +20,7 @@ export const octopus = {
     controlHit: 0,
     controlResistance: 0,
     gridBlock: 0,
-    precise: 0
+    precise: 0,
+    mainSkill: 10002,
+    taunt: 100,
 }

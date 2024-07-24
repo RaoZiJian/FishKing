@@ -26,6 +26,7 @@ export class CrabActor extends Actor {
         this.controlResistance = crab.controlResistance;
         this.gridBlock = crab.gridBlock;
         this.precise = crab.precise;
+        this.taunt = crab.taunt;
     }
 }
 

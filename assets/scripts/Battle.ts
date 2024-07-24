@@ -1,7 +1,7 @@
 import { _decorator, Canvas, Component, director, instantiate, log, Node, Prefab, resources, UITransform, Vec3 } from 'cc';
 import { Mediator } from './Mediator/Mediator';
 import { Command, CommandQueue } from './Commands/Command';
-import { AttackCommand, MoveCommand } from './Commands/ActorCommands';
+import { AttackCommand, MainSkillCommand, MoveCommand } from './Commands/ActorCommands';
 import { Constants } from './Constants';
 import { RES_URL } from './ResourceUrl';
 import { CrabMediator } from './Mediator/CrabMediator';
@@ -10,6 +10,7 @@ import { ZhaoYunMediator } from './Mediator/ZhaoYunMediator';
 import { LvMengMediator } from './Mediator/LvMengMediator';
 import { OctopusMediator } from './Mediator/OctopusMediator';
 import { ZhangLiaoMediator } from './Mediator/ZhangLiaoMediator';
+import { MainSkillFactory } from './Skill/MainSkillFactory';
 const { ccclass, property } = _decorator;
 
 @ccclass('Battle')
@@ -167,6 +168,19 @@ export class Battle extends Component {
 
     }
 
+    canUseSkill(attacker: Mediator): boolean {
+
+        if (attacker.actor.mainSkill) {
+            return true;
+        }
+        return false;
+    }
+
+    sortAliveActorByTaunt(team: Array<Mediator>) {
+        let aliveActors = this.getAliveActors(team);
+        return aliveActors.sort((a, b) => { return b.actor.taunt - a.actor.taunt });
+    }
+
     runBattle(actors: Mediator[]) {
         let duration = 0;
         let leftAliveActors = this.getAliveActors(this.teamLeft);
@@ -175,14 +189,13 @@ export class Battle extends Component {
         if (leftAliveActors.length > 0 && rightAliveActors.length > 0) {
             let combatCommands = [];
             const attacker = this.getNextActor(actors);
-            let defender: Mediator = null;
             const isLeft = this.isMemeberFromLeft(attacker);
+            let defender: Mediator = null;
             if (isLeft) {
-                defender = rightAliveActors[0];
+                defender = this.sortAliveActorByTaunt(rightAliveActors)[0];
             } else {
-                defender = leftAliveActors[0];
+                defender = this.sortAliveActorByTaunt(leftAliveActors)[0];
             }
-
             if (attacker && defender) {
 
                 const beginPos = new Vec3(attacker.node.position);
@@ -193,33 +206,63 @@ export class Battle extends Component {
                     x = targetPos.x + defender.getComponent(UITransform).contentSize.width
                 }
                 const y = targetPos.y
+                let moveTo = new MoveCommand(attacker, new Vec3(x, y, 0), Constants.AttakingWalkTime);
+                let moveBack = new MoveCommand(attacker, beginPos, Constants.AttakingWalkTime);
 
-                const moveTo = new MoveCommand(attacker, new Vec3(x, y, 0), Constants.AttakingWalkTime);
-                const attack = new AttackCommand(attacker, defender);
-                const moveBack = new MoveCommand(attacker, beginPos, Constants.AttakingWalkTime);
-                combatCommands.push(moveTo);
-                combatCommands.push(attack);
-                combatCommands.push(moveBack);
-                const commandQueue = new CommandQueue(combatCommands);
-                commandQueue.execute();
+                if (this.canUseSkill(attacker)) {
+                    let mainSkillData = attacker.actor.mainSkill;
+                    //是否是对自己释放，不需要移动意味着对自己释放
+                    if (!mainSkillData.NeedMove) {
+                        let mainSkill = MainSkillFactory.createMainSkill(mainSkillData, attacker, [attacker]);
+                        let skillCommand = new MainSkillCommand(mainSkill);
+                        duration += skillCommand.duration;
+                        combatCommands.push(skillCommand);
+                    } else {
+                        duration += moveTo.duration;
+                        combatCommands.push(moveTo);
+                        let mainSkill = null;
+                        if (isLeft) {
+                            mainSkill = MainSkillFactory.createMainSkill(mainSkillData, attacker, rightAliveActors);
+                        } else {
+                            mainSkill = MainSkillFactory.createMainSkill(mainSkillData, attacker, leftAliveActors);
+                        }
+                        let skillCommand = new MainSkillCommand(mainSkill);
+                        duration += skillCommand.duration;
+                        combatCommands.push(skillCommand);
 
-                duration += (moveTo.duration + attack.duration + moveBack.duration) * 1000;
-
-                setTimeout(() => {
-                    const index = actors.indexOf(attacker);
-                    actors.splice(index, 1);
-                    if (actors.length === 0) {
-                        actors = this._getBattleLoopActors();
+                        duration += moveBack.duration;
+                        combatCommands.push(moveBack);
                     }
-                    this.runBattle(actors);
-                }, duration);
+                } else {
+                    const attack = new AttackCommand(attacker, defender);
+                    combatCommands.push(moveTo);
+                    combatCommands.push(attack);
+                    combatCommands.push(moveBack);
+                    duration += moveTo.duration;
+                    duration += attack.duration;
+                    duration += moveBack.duration;
+                }
             }
+
+            const commandQueue = new CommandQueue(combatCommands);
+            commandQueue.execute();
+
+            duration *= 1000;
+
+            setTimeout(() => {
+                const index = actors.indexOf(attacker);
+                actors.splice(index, 1);
+                if (actors.length === 0) {
+                    actors = this._getBattleLoopActors();
+                }
+                this.runBattle(actors);
+            }, duration);
         }
     }
 
     update(deltaTime: number) {
         if (this._allPrefabs == this._resourceLoaded) {
-            if(this._battleNotBegin){
+            if (this._battleNotBegin) {
                 let loopActors = this._getBattleLoopActors();
                 this.runBattle(loopActors);
                 this._battleNotBegin = false;

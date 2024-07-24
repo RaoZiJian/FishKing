@@ -452,22 +452,27 @@
         "__expectedType__": "cc.AnimationClip"
       },
       {
-        "__uuid__": "50b98290-6290-4e09-9519-4168911fe37f",
-        "__expectedType__": "cc.AnimationClip"
-      },
-      {
         "__uuid__": "74ebae54-babb-4812-9c00-2584151155ae",
         "__expectedType__": "cc.AnimationClip"
       },
       {
         "__uuid__": "bc15a2db-58cf-4f39-9e52-cc8b1cfcd4fe",
         "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "f7d3630e-a3de-445a-bd1b-34a2af28b15c",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "945e2181-778a-4d85-95b7-34936c5ab875",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "6af5e044-e544-4a01-b6b1-9a6ba038b6a2",
+        "__expectedType__": "cc.AnimationClip"
       }
     ],
-    "_defaultClip": {
-      "__uuid__": "bc15a2db-58cf-4f39-9e52-cc8b1cfcd4fe",
-      "__expectedType__": "cc.AnimationClip"
-    },
+    "_defaultClip": null,
     "_id": ""
   },
   {

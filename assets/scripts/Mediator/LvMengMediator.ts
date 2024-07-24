@@ -3,7 +3,8 @@ import { LvMengActor } from '../Actors/LvMengActor';
 import { Mediator } from './Mediator';
 import { lvmeng } from '../Data/LvMeng';
 import { LvMengStateMachine } from '../StateMachine/LvMengStateMachine';
-const { ccclass, property } = _decorator;
+import { EffectTarget } from '../Skill/EffectTarget';
+const { ccclass } = _decorator;
 
 @ccclass('LvMengMediator')
 export class LvMengMediator extends Mediator {
@@ -11,10 +12,12 @@ export class LvMengMediator extends Mediator {
     protected onLoad(): void {
         this.actor = new LvMengActor();
         this.actor.fetchActor();
+        this.effectTarget = new EffectTarget(this);
     }
 
     start() {
         this.stateMachine = this.getComponentInChildren(LvMengStateMachine);
+        this.stateMachine.mediator = this;
     }
 
     protected updateHpBar(): void {
