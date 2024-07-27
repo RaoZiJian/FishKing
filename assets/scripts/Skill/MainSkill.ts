@@ -115,23 +115,23 @@ export class JumpHitSkill extends MainSkill {
                 const jumpOffsetX = isDirecationReverse ? -20 : 20;
                 const jumpOffsetY = 50;
 
-                setTimeout(() => {
+                this.attacker.scheduleOnce(() => {
                     tween(this.attacker.node)
                         .by(jumpLoopAnimationDuration, { position: new Vec3(jumpOffsetX, jumpOffsetY, 0) }, { easing: "elasticIn" })
                         .by(jumpAttacktAnimationDuration, { position: new Vec3(0, -jumpOffsetY, 0) })
                         .start();
 
-                    setTimeout(() => {
+                    this.attacker.scheduleOnce(() => {
                         attackerAnimation.play(this.jumpAnimations.jumpAttack);
                         const damage = this.getSkillDamage();
-                        setTimeout(() => {
+                        this.defender[0].scheduleOnce(() => {
                             const hurt = new HurtCommand(this.attacker, this.defender[0], damage);
                             hurt.execute();
-                        }, this.duration * 0.5 * 1000)
+                        }, this.duration * 0.5)
 
-                    }, jumpLoopAnimationDuration * 1000);
+                    }, jumpLoopAnimationDuration);
 
-                }, jumpStartAnimationDuration * 1000);
+                }, jumpStartAnimationDuration);
 
 
             } else {

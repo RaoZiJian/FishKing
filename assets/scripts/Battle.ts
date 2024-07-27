@@ -1,4 +1,4 @@
-import { _decorator, Canvas, Component, director, instantiate, log, Node, Prefab, resources, UITransform, Vec3 } from 'cc';
+import { _decorator, Canvas, Component, director, instantiate, log, Node, Prefab, resources, UIOpacity, UITransform, Vec3 } from 'cc';
 import { Mediator } from './Mediator/Mediator';
 import { Command, CommandQueue } from './Commands/Command';
 import { AttackCommand, MainSkillCommand, MoveCommand } from './Commands/ActorCommands';
@@ -34,6 +34,9 @@ export class Battle extends Component {
     @property(Node)
     rightFish3: Node;
 
+    @property(UIOpacity)
+    loading: UIOpacity;
+
     private _teamLeft: Array<Mediator> = [];
     public get teamLeft(): Array<Mediator> {
         return this._teamLeft;
@@ -59,14 +62,31 @@ export class Battle extends Component {
     private _allPrefabs: number = 0;
     private _battleNotBegin: boolean = true;
 
-    start() {
-        this.initFishes();
+    protected onLoad(): void {
+        this._fetchMyFishes();
     }
 
-    initFishes() {
+    _fetchMyFishes() {
+        // 从服务器拉取数据，目前使用假数据
+        // fetch("http://127.0.0.1:8080").then((response: Response) => {
+        //     if(response){
+        //         this.initMyFishes();
+        //     }
+        // }).then((value) => {
+        //     console.log(value);
+        // })
+    }
+
+    start() {
+        this.loading.opacity = 255;
+        this.initMyFishes();
+        this.initEnemyFishes();
+    }
+
+    initMyFishes() {
         this._allPrefabs = 6;
         let canvas = director.getScene().getComponentInChildren(Canvas);
-        let parent = canvas.node.getChildByName('MyFishes');
+        let parent = canvas.node.getChildByName('BattleField');
         resources.load(RES_URL.crabActor, Prefab, (error, prefab) => {
             if (prefab) {
                 let actor = instantiate(prefab);
@@ -74,20 +94,6 @@ export class Battle extends Component {
                     parent.addChild(actor);
                     actor.position = this.leftFish1.position;
                     this.teamLeft.push(actor.getComponent(CrabMediator));
-                    this._resourceLoaded++;
-                }
-            }
-        });
-
-        resources.load(RES_URL.piranhaActor, Prefab, (error, prefab) => {
-            if (prefab) {
-                let actor = instantiate(prefab);
-                if (actor) {
-                    parent.addChild(actor);
-                    actor.position = this.rightFish1.position;
-                    let medaitor = actor.getComponent(PiranhaMediator);
-                    medaitor.setDireactionReverse();
-                    this.teamRight.push(medaitor);
                     this._resourceLoaded++;
                 }
             }
@@ -112,6 +118,26 @@ export class Battle extends Component {
                     parent.addChild(actor);
                     actor.position = this.leftFish3.position;
                     this.teamLeft.push(actor.getComponent(LvMengMediator));
+                    this._resourceLoaded++;
+                }
+            }
+        });
+    }
+
+    initEnemyFishes() {
+        this._allPrefabs = 6;
+        let canvas = director.getScene().getComponentInChildren(Canvas);
+        let parent = canvas.node.getChildByName('BattleField');
+
+        resources.load(RES_URL.piranhaActor, Prefab, (error, prefab) => {
+            if (prefab) {
+                let actor = instantiate(prefab);
+                if (actor) {
+                    parent.addChild(actor);
+                    actor.position = this.rightFish1.position;
+                    let medaitor = actor.getComponent(PiranhaMediator);
+                    medaitor.setDireactionReverse();
+                    this.teamRight.push(medaitor);
                     this._resourceLoaded++;
                 }
             }
@@ -161,7 +187,7 @@ export class Battle extends Component {
     }
 
     isMemeberFromLeft(target: Mediator): boolean {
-        return this.teamLeft.some(member => member.actor.id === target.actor.id)
+        return this.teamLeft.some(member => member.actor.uuuId === target.actor.uuuId)
     }
 
     _battleLoop() {
@@ -247,9 +273,7 @@ export class Battle extends Component {
             const commandQueue = new CommandQueue(combatCommands);
             commandQueue.execute();
 
-            duration *= 1000;
-
-            setTimeout(() => {
+            this.scheduleOnce(() => {
                 const index = actors.indexOf(attacker);
                 actors.splice(index, 1);
                 if (actors.length === 0) {
@@ -263,6 +287,7 @@ export class Battle extends Component {
     update(deltaTime: number) {
         if (this._allPrefabs == this._resourceLoaded) {
             if (this._battleNotBegin) {
+                this.loading.opacity = 0;
                 let loopActors = this._getBattleLoopActors();
                 this.runBattle(loopActors);
                 this._battleNotBegin = false;

@@ -78,19 +78,19 @@ export class AttackCommand extends Command {
 
     execute(): void {
         this.attacker.changeState(CharacterState.ATTACKING);
-        const attackDuration = this.duration * 1000;
+        const attackDuration = this.duration;
         const attack = this.attacker.actor.attack;
         const defence = this.defender.actor.defense;
         const damage = (attack - defence) > 0 ? attack - defence : 0;
 
-        setTimeout(() => {
+        this.attacker.scheduleOnce(() => {
             this.complete();
         }, attackDuration);
 
-        setTimeout(() => {
+        this.defender.scheduleOnce(() => {
             const hurt = new HurtCommand(this.attacker, this.defender, damage);
             hurt.execute();
-        }, this.attacker.getAnimationDuration(CharacterState.ATTACKING) * 0.5 * 1000)
+        }, this.attacker.getAnimationDuration(CharacterState.ATTACKING) * 0.5)
     }
 }
 
@@ -138,9 +138,8 @@ export class HurtCommand extends Command {
         const currentHp = (hp - this.damage) > 0 ? hp - this.damage : 0;
         this.defender.setHP(currentHp);
         this.defender.changeState(CharacterState.HURT);
-        const hurtDuration = this.duration * 1000;
 
-        setTimeout(() => {
+        this.defender.scheduleOnce(() => {
             if (currentHp > 0) {
                 this.defender.changeState(CharacterState.IDLE);
             } else {
@@ -148,7 +147,7 @@ export class HurtCommand extends Command {
                 deadCommand.execute();
             }
             this.complete();
-        }, hurtDuration);
+        }, this.duration);
     }
 }
 
@@ -200,10 +199,14 @@ export class MainSkillCommand extends Command {
     }
 
     execute(): void {
+        this.skill.attacker.changeState(CharacterState.CASTING);
         this.skill.useSkill();
-        setTimeout(() => {
+        this.skill.attacker.scheduleOnce(() => {
+            if (!this.skill.skillData.NeedMove) {
+                this.skill.attacker.changeState(CharacterState.IDLE);
+            }
             this.complete();
-        }, this.duration * 1000);
+        }, this.duration);
     }
 }
 

@@ -1,8 +1,7 @@
-import { _decorator} from 'cc';
+import { _decorator } from 'cc';
 import { Mediator } from './Mediator';
 import { octopusActor } from '../Actors/OctopusActor';
 import { OctopusStateMachine } from '../StateMachine/OctopusStateMachine';
-import { octopus } from '../Data/Octopus';
 import { EffectTarget } from '../Skill/EffectTarget';
 const { ccclass } = _decorator;
 
@@ -20,19 +19,8 @@ export class OctopusMediator extends Mediator {
         this.stateMachine.mediator = this;
     }
 
-    protected updateHpBar(): void {
-        const percent = this.actor.hp / octopus.hp;
-        this.hpBar.progress = percent;
-    }
-
-    protected updateRageBar(): void {
-        const percent = this.actor.rage / octopus.rage;
-        this.rageBar.progress = percent;
-    }
-
-
     update(deltaTime: number) {
-        
+
     }
 }
 

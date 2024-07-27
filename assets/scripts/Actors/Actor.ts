@@ -1,4 +1,4 @@
-import { SkillData } from "../Data/SkillData";
+import { SkillData, skillDataList } from "../Data/SkillData";
 
 export class ActorId {
 
@@ -17,6 +17,71 @@ export class Actor {
      * 从表里读取和初始化数据
      */
     public fetchActor(): void {
+    }
+
+    /**
+     * 基础配置数据
+     */
+    private _cfg;
+    public get cfg() {
+        return this._cfg;
+    }
+    public set cfg(value) {
+        this._cfg = value;
+    }
+
+    /**
+     * 源数据赋值
+     */
+    protected parseCfg(): void {
+        if (this.cfg) {
+            this.id = this.assignNumber(this.cfg?.id);
+            this.name = this.cfg?.name;
+            this.hp = this.assignNumber(this.cfg?.hp);
+            this.attackShake = this.assignNumber(this.cfg?.attackShake);
+            this.attackAfterShake = this.assignNumber(this.cfg?.attackAfterShake);
+            this.attack = this.assignNumber(this.cfg?.attack);
+            this.rage = this.assignNumber(this.cfg?.rage);
+            this.defense = this.assignNumber(this.cfg?.defense);
+            this.speed = this.assignNumber(this.cfg?.speed);
+            this.damageIncrease = this.assignNumber(this.cfg?.damageIncrease);
+            this.damageDecrease = this.assignNumber(this.cfg?.damageDecrease);
+            this.skillDamage = this.assignNumber(this.cfg?.skillDamage);
+            this.skillDecrease = this.assignNumber(this.cfg?.skillDecrease);
+            this.amorDecrease = this.assignNumber(this.cfg?.amorDecrease);
+            this.amorDecreaseResistance = this.assignNumber(this.cfg?.amorDecreaseResistance);
+            this.criticalHitRate = this.assignNumber(this.cfg?.criticalHitRate);
+            this.criticalResistance = this.assignNumber(this.cfg?.criticalResistance);
+            this.criticalDamage = this.assignNumber(this.cfg?.criticalDamage);
+            this.criticalDamageResistance = this.assignNumber(this.cfg?.criticalDamageResistance);
+            this.controlHit = this.assignNumber(this.cfg?.controlHit);
+            this.controlResistance = this.assignNumber(this.cfg?.controlResistance);
+            this.gridBlock = this.assignNumber(this.cfg?.gridBlock);
+            this.precise = this.assignNumber(this.cfg?.precise);
+            this.taunt = this.assignNumber(this.cfg?.taunt);
+            const mainSkillId = this.assignNumber(this.cfg?.mainSkill);
+            if (mainSkillId && mainSkillId != 0) {
+                let searchMainSkill = skillDataList.filter((skill) => skill.Id == mainSkillId)
+                if (searchMainSkill && searchMainSkill.length > 0) {
+                    this.mainSkill = searchMainSkill[0];
+                }
+            }
+        }
+    }
+
+    private assignNumber(value: any): number {
+        return typeof value === 'number' && value !== null && value !== undefined ? value : 0;
+    }
+
+    /**
+     * UUUId
+     */
+    private _uuuId: number = -1;
+    public get uuuId(): number {
+        return this._uuuId;
+    }
+    public set uuuId(value: number) {
+        this._uuuId = value;
     }
 
     /**

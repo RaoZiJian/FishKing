@@ -58,7 +58,7 @@ export class SingleTauntBuff extends Buff {
 
     work(target: EffectTarget): void {
         this.tauntEffect.cast(target);
-        setTimeout(() => {
+        this.target.mediator.scheduleOnce(() => {
             this.tauntEffect.remove();
         }, this.tauntDuration);
     }

@@ -1,38 +1,20 @@
+import { log } from "cc";
+import { FishActorId } from "../Constants";
+import GameTsCfg from "../Data/export/client/GameTsCfg";
 import { skillDataList } from "../Data/SkillData";
-import { zhaoyun } from "../Data/ZhaoYun";
 import { Actor, ActorId } from "./Actor";
 
 export class ZhaoYunActor extends Actor {
     public override fetchActor(): void {
-        this.id = ActorId.generateActorId();
-        this.name = zhaoyun.name;
-        this.hp = zhaoyun.hp;
-        this.attackShake = zhaoyun.attackShake;
-        this.attackAfterShake = zhaoyun.attackAfterShake;
-        this.attack = zhaoyun.attack;
-        this.rage = zhaoyun.rage;
-        this.defense = zhaoyun.defense;
-        this.speed = zhaoyun.speed;
-        this.damageIncrease = zhaoyun.damageIncrease;
-        this.damageDecrease = zhaoyun.damageDecrease;
-        this.skillDamage = zhaoyun.skillDamage;
-        this.skillDecrease = zhaoyun.skillDecrease;
-        this.amorDecrease = zhaoyun.amorDecrease;
-        this.amorDecreaseResistance = zhaoyun.amorDecreaseResistance;
-        this.criticalHitRate = zhaoyun.criticalHitRate;
-        this.criticalResistance = zhaoyun.criticalResistance;
-        this.criticalDamage = zhaoyun.criticalDamage;
-        this.criticalDamageResistance = zhaoyun.criticalDamageResistance;
-        this.controlHit = zhaoyun.controlHit;
-        this.controlResistance = zhaoyun.controlResistance;
-        this.gridBlock = zhaoyun.gridBlock;
-        this.precise = zhaoyun.precise;
-        this.taunt = zhaoyun.taunt;
-        const mainSkillId = zhaoyun.mainSkill;
-        let searchMainSkill = skillDataList.filter((skill) => skill.Id == mainSkillId)
-        if (searchMainSkill.length > 0) {
-            this.mainSkill = searchMainSkill[0];
+        this.uuuId = ActorId.generateActorId();
+        const gameCfg = GameTsCfg.actor;
+        this.cfg = gameCfg[FishActorId.ZhaoYun];
+        if (this.cfg) {
+            this.parseCfg();
+        } else {
+            log("cannot find zhaoyun config");
         }
+
     }
 }
 

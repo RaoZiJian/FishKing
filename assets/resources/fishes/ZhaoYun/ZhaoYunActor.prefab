@@ -483,12 +483,28 @@
     "playOnLoad": false,
     "_clips": [
       {
-        "__uuid__": "0d5270a6-c564-4750-ab63-9c5c388f8d78",
+        "__uuid__": "215f72a0-698c-4327-8b60-ad595345c755",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "9769013e-41dd-4766-a790-be8d593f2509",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "648afd7d-544c-4b7d-92e1-0ad4a1bf5074",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "cbad1037-586a-4050-beef-f42bc4913cc0",
+        "__expectedType__": "cc.AnimationClip"
+      },
+      {
+        "__uuid__": "6dbd4ffa-6e5b-4eab-9210-835264a7322c",
         "__expectedType__": "cc.AnimationClip"
       }
     ],
     "_defaultClip": {
-      "__uuid__": "0d5270a6-c564-4750-ab63-9c5c388f8d78",
+      "__uuid__": "215f72a0-698c-4327-8b60-ad595345c755",
       "__expectedType__": "cc.AnimationClip"
     },
     "_id": ""

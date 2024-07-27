@@ -75,11 +75,17 @@ export class Mediator extends Component {
     }
 
     protected updateHpBar(): void {
-
+        if (this.actor && this.actor.cfg) {
+            const percent = this.actor.hp / this.actor.cfg.hp;
+            this.hpBar.progress = percent;
+        }
     }
 
     protected updateRageBar(): void {
-
+        if(this.actor && this.actor.cfg){
+            const percent = this.actor.rage / this.actor.cfg.rage;
+            this.rageBar.progress = percent;
+        }
     }
 
     getAnimationDuration(state) {
@@ -131,8 +137,8 @@ export class Mediator extends Component {
 
     hurt() {
         this.stateMachine.changeState(CharacterState.HURT);
-        const duration = this.getAnimationDuration(CharacterState.HURT) * 1000;
-        setTimeout(() => {
+        const duration = this.getAnimationDuration(CharacterState.HURT);
+        this.scheduleOnce(() => {
             if (this.isAlive) {
                 this.changeState(CharacterState.IDLE);
             }
