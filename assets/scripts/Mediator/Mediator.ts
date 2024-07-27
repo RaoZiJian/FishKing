@@ -2,6 +2,7 @@ import { _decorator, Component, Node, ProgressBar, Vec3 } from 'cc';
 import { Actor } from '../Actors/Actor';
 import { ActorStateMichine, CharacterState } from '../StateMachine/ActorStateMachine';
 import { EffectTarget } from '../Skill/EffectTarget';
+import { addBuffAnimation } from '../Skill/SkillAnimation/addBuffAnimation';
 const { ccclass, property } = _decorator;
 
 @ccclass('Mediator')
@@ -39,7 +40,7 @@ export class Mediator extends Component {
         this._isAlive = value;
     }
 
-    private _isDirecationReverse: boolean;
+    private _isDirecationReverse: boolean = false;
     public get isDirecationReverse(): boolean {
         return this._isDirecationReverse;
     }
@@ -52,6 +53,9 @@ export class Mediator extends Component {
 
     @property(ProgressBar)
     rageBar: ProgressBar;
+
+    @property(addBuffAnimation)
+    addBuffAni: addBuffAnimation;
 
     getHP(): number {
         return this.actor.hp;
@@ -82,7 +86,7 @@ export class Mediator extends Component {
     }
 
     protected updateRageBar(): void {
-        if(this.actor && this.actor.cfg){
+        if (this.actor && this.actor.cfg) {
             const percent = this.actor.rage / this.actor.cfg.rage;
             this.rageBar.progress = percent;
         }

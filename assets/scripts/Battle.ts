@@ -180,10 +180,9 @@ export class Battle extends Component {
         return mediators.find(mediator => mediator.isAlive);
     }
 
-    _getBattleLoopActors(): Mediator[] {
-        const allActors = [...this.teamLeft, ...this.teamRight];
-        allActors.sort((a, b) => b.actor.speed - a.actor.speed);
-        return allActors.filter(mediator => mediator.isAlive);
+    removeDeadActors(targets:Mediator[]): Mediator[] {
+        targets.sort((a, b) => b.actor.speed - a.actor.speed);
+        return targets.filter(mediator => mediator.isAlive);
     }
 
     isMemeberFromLeft(target: Mediator): boolean {
@@ -274,10 +273,13 @@ export class Battle extends Component {
             commandQueue.execute();
 
             this.scheduleOnce(() => {
-                const index = actors.indexOf(attacker);
-                actors.splice(index, 1);
+                actors = actors.filter((element)=>element.actor.id !== attacker.actor.id);
+                actors = this.removeDeadActors(actors);
+                this.teamLeft = this.removeDeadActors(this.teamLeft);
+                this.teamRight = this.removeDeadActors(this.teamRight);
                 if (actors.length === 0) {
-                    actors = this._getBattleLoopActors();
+                    const allActors = [...this.teamLeft, ...this.teamRight];
+                    actors = this.removeDeadActors(allActors);
                 }
                 this.runBattle(actors);
             }, duration);
@@ -288,8 +290,7 @@ export class Battle extends Component {
         if (this._allPrefabs == this._resourceLoaded) {
             if (this._battleNotBegin) {
                 this.loading.opacity = 0;
-                let loopActors = this._getBattleLoopActors();
-                this.runBattle(loopActors);
+                this.runBattle(this.removeDeadActors([...this.teamLeft, ...this.teamRight]));
                 this._battleNotBegin = false;
             }
         }

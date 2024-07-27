@@ -4,6 +4,7 @@ import { Command } from './Command';
 import { Mediator } from '../Mediator/Mediator';
 import { Constants } from '../Constants';
 import { MainSkill } from '../Skill/MainSkill';
+import { DamageFactory } from '../Skill/DamageFactory';
 
 export class MoveCommand extends Command {
 
@@ -124,18 +125,16 @@ export class HurtCommand extends Command {
         super();
         this.defender = defender
         this.attacker = attack;
+        this.damage = damage;
         this.duration = this.defender.getAnimationDuration(CharacterState.HURT);
     }
 
     execute(): void {
         const attack = this.attacker.actor.attack;
         const defence = this.defender.actor.defense;
-        // const hp = this.defender.actor.hp;
-        // const lostHp = (attack - defence) > 0 ? attack - defence : 0;
-        // const currentHp = (hp - lostHp) > 0 ? hp - lostHp : 0;
-        // this.defender.setHP(currentHp);
         const hp = this.defender.actor.hp;
         const currentHp = (hp - this.damage) > 0 ? hp - this.damage : 0;
+        DamageFactory.showDamage(this.defender, this.damage);
         this.defender.setHP(currentHp);
         this.defender.changeState(CharacterState.HURT);
 

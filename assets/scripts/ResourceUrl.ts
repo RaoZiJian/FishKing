@@ -8,4 +8,6 @@ export const RES_URL = {
     lvMengActor: 'fishes/LvMeng/LvMengActor',
     octopusActor: 'fishes/Octopus/OctopusActor',
     zhangliaoActor: 'fishes/ZhangLiao/ZhangLiaoActor',
+    addBuffAniPrefab: 'effects/buff/addBuff',
+    damagePrefab:'effects/buff/hit'
 }
