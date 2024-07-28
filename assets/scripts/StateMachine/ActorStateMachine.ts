@@ -8,6 +8,7 @@ export const CharacterState = {
     IDLE: 'idle',
     WALKING: 'walking',
     ATTACKING: 'attacking',
+    SHOOTING: 'shooting',
     CASTING: 'casting',
     HURT: 'hurt',
     DYING: 'dying',

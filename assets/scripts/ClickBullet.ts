@@ -7,7 +7,6 @@ import { RES_URL } from './ResourceUrl';
 @ccclass('ClickBullet')
 export class ClickBullet extends Component {
 
-
     _isFire: boolean = false;
 
     private _baseSpeed: number = 10;
@@ -50,8 +49,10 @@ export class ClickBullet extends Component {
         this._endNode = value;
     }
 
-    @property({type:Node})
-    public bullet:Node;
+    public onHit?: () => void;
+
+    @property({ type: Node })
+    public bullet: Node;
 
 
     start() {
@@ -71,12 +72,12 @@ export class ClickBullet extends Component {
         let x = this.node.worldPosition.x + normalize.x * this.baseSpeed;
         let y = this.node.worldPosition.y + normalize.y * this.baseSpeed;
 
-        this.node.worldPosition = new Vec3(x,y,0);
+        this.node.worldPosition = new Vec3(x, y, 0);
     }
 
     _testHit(): boolean {
-        
-        if(this.endNode.getComponent(UITransform).getBoundingBoxToWorld().contains(new Vec2(this.node.getWorldPosition().x, this.node.getWorldPosition().y))){
+
+        if (this.endNode.getComponent(UITransform).getBoundingBoxToWorld().contains(new Vec2(this.node.getWorldPosition().x, this.node.getWorldPosition().y))) {
             return true;
         }
 
@@ -87,12 +88,13 @@ export class ClickBullet extends Component {
         if (this._isFire) {
             this._move(deltaTime);
             this._lookAt();
-            if(this._testHit()){
-                resources.load(RES_URL.clickBulletExplode, Prefab, (error, prefab)=>{
+            if (this._testHit()) {
+                resources.load(RES_URL.clickBulletExplode, Prefab, (error, prefab) => {
                     let explosion = instantiate(prefab);
-                    if(explosion){
+                    if (explosion) {
                         let explsionCommand = new FireBulletExplodeCommand(this.endNode.worldPosition, explosion);
                         explsionCommand.execute();
+                        this.onHit();
                         this.node.destroy();
                     }
                 })
@@ -101,11 +103,12 @@ export class ClickBullet extends Component {
         }
     }
 
-    fire(start: Vec3, end: Node) {
+    fire(start: Vec3, end: Node, onHit: () => void) {
         this.startLocation = start;
         this.endNode = end;
         this.node.worldPosition = new Vec3(this.startLocation.x, this.startLocation.y, 0);
         this._isFire = true;
+        this.onHit = onHit
     }
 }
 

@@ -1,10 +1,7 @@
 import { _decorator, Component, instantiate, Node, NodeEventType, Prefab, resources, UITransform, Vec3 } from 'cc';
 import { RES_URL } from './ResourceUrl';
-import { CommandQueue, FireBulletCommand } from './Commands/Command';
-import { AttackCommand, MoveCommand } from './Commands/ActorCommands';
-import { CrabStateMachine } from './StateMachine/CrabStateMachine';
-import { CrabMediator } from './Mediator/CrabMediator';
-import { PiranhaMediator } from './Mediator/PiranhaMediator';
+import { FireBulletCommand } from './Commands/Command';
+import { HurtCommand } from './Commands/ActorCommands';
 const { ccclass, property } = _decorator;
 
 @ccclass('FireBulletArea')
@@ -25,7 +22,8 @@ export class FireBulletArea extends Component {
 
                 if (bulletNode) {
                     bulletNode.active = true;
-                    const bulletCommand = new FireBulletCommand(event.getUILocation(), this.rightFish, bulletNode);
+                    const bulletCommand = new FireBulletCommand(event.getUILocation(), this.rightFish, bulletNode, () => { 
+                    });
                     bulletCommand.execute();
                 }
             });

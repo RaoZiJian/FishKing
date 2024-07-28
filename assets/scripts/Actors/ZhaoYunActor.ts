@@ -1,7 +1,6 @@
 import { log } from "cc";
 import { FishActorId } from "../Constants";
 import GameTsCfg from "../Data/export/client/GameTsCfg";
-import { skillDataList } from "../Data/SkillData";
 import { Actor, ActorId } from "./Actor";
 
 export class ZhaoYunActor extends Actor {

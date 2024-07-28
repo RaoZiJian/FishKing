@@ -10,15 +10,6 @@ export class hitAnimation extends Component {
     @property(Label)
     label: Label;
 
-    private _reverse: boolean;
-    public get reverse(): boolean {
-        return this._reverse;
-    }
-    public set reverse(value: boolean) {
-        this._reverse = value;
-        this.node.scale = new Vec3(value ? -1 : 1, 1, 1);
-    }
-
     private _damage: number;
     public get damage(): number {
         return this._damage;

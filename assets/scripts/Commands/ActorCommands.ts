@@ -1,10 +1,11 @@
-import { tween, UIOpacity, Vec3 } from 'cc';
+import { director, instantiate, Prefab, resources, tween, UIOpacity, Vec3 } from 'cc';
 import { CharacterState } from '../StateMachine/ActorStateMachine';
-import { Command } from './Command';
+import { Command, FireBulletCommand } from './Command';
 import { Mediator } from '../Mediator/Mediator';
 import { Constants } from '../Constants';
 import { MainSkill } from '../Skill/MainSkill';
 import { DamageFactory } from '../Skill/DamageFactory';
+import { RES_URL } from '../ResourceUrl';
 
 export class MoveCommand extends Command {
 
@@ -52,7 +53,7 @@ export class MoveCommand extends Command {
     }
 }
 
-export class AttackCommand extends Command {
+export class MeleeAttackCommand extends Command {
 
     private _attacker: Mediator;
     public get attacker(): Mediator {
@@ -95,6 +96,58 @@ export class AttackCommand extends Command {
             hurt.execute();
         }, this.attacker.getAnimationDuration(CharacterState.ATTACKING) * 0.5)
     }
+}
+
+export class RangedAttackCommand extends Command {
+
+    private _attacker: Mediator;
+    public get attacker(): Mediator {
+        return this._attacker;
+    }
+    public set attacker(value: Mediator) {
+        this._attacker = value;
+    }
+
+    private _defender: Mediator;
+    public get defender(): Mediator {
+        return this._defender;
+    }
+    public set defender(value: Mediator) {
+        this._defender = value;
+    }
+
+    constructor(attacker: Mediator, target: Mediator) {
+        super();
+        this.attacker = attacker
+        this.defender = target;
+        this.duration = this.attacker.getAnimationDuration(CharacterState.SHOOTING) + this.attacker.actor.attackShake;
+    }
+
+    execute(): void {
+        this.attacker.changeState(CharacterState.SHOOTING);
+        const shooting = this.duration;
+        const attack = this.attacker.actor.attack;
+        const defence = this.defender.actor.defense;
+        const damage = (attack - defence) > 0 ? attack - defence : 0;
+        const canvas = director.getScene().getChildByName('Canvas');
+
+        resources.load(RES_URL.hzArrow, Prefab, (error, prefab) => {
+            if (prefab) {
+                let arrow = instantiate(prefab);
+                canvas.addChild(arrow);
+                const shootingCommand = new FireBulletCommand(this.attacker.node.worldPosition, this.defender.node, arrow, () => {
+                    const hurt = new HurtCommand(this.attacker, this.defender, damage);
+                    hurt.execute();
+                });
+                shootingCommand.execute();
+                this.attacker.scheduleOnce(() => {
+                    this.attacker.changeState(CharacterState.IDLE);
+                    this.complete();
+                }, this.duration);
+            }
+        });
+    }
+
 }
 
 export class HurtCommand extends Command {

@@ -94,18 +94,21 @@ export class FireBulletCommand extends Command {
         this._bullet = value;
     }
 
-    constructor(start: Vec3, end: Node, bullet: Node) {
+    onHit?: () => void
+
+    constructor(start: Vec3, end: Node, bullet: Node, onHit: () => void) {
         super();
         this.start = start;
         this.end = end;
         this.bullet = bullet;
         this.duration = 0;
+        this.onHit = onHit;
     }
 
     execute(): void {
         let clickBullet = this.bullet.getComponent(ClickBullet);
         if (clickBullet) {
-            clickBullet.fire(this.start, this.end);
+            clickBullet.fire(this.start, this.end, this.onHit);
         }
         this.complete();
     }

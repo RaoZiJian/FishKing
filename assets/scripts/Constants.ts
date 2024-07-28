@@ -18,4 +18,11 @@ export const FishActorId = {
     Octopus: 4,
     ZhangLiao: 5,
     ZhaoYun: 6,
+    HuangZhong: 7,
+}
+
+export const AttackType = {
+    MeleeAttack: 1, //近战攻击
+    RangedAttack: 2, //远程攻击
+    Healing: 3,//治疗
 }

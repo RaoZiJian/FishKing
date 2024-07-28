@@ -28,7 +28,7 @@ export class EffectTarget {
         this.buffList = this.buffList.filter((b) => b !== buff);
     }
 
-    castMainSkill(){
-        
+    castMainSkill() {
+
     }
 }

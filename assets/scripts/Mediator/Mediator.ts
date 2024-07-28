@@ -68,11 +68,11 @@ export class Mediator extends Component {
         }
     }
 
-    getRage():number{
+    getRage(): number {
         return this.actor.rage;
     }
 
-    setRage(value:number):void{
+    setRage(value: number): void {
         if (value != this.actor.hp) {
             this.actor.rage = value;
             this.updateRageBar();
@@ -129,6 +129,9 @@ export class Mediator extends Component {
             case CharacterState.DYING:
                 this.dying();
                 break;
+            case CharacterState.SHOOTING:
+                this.shooting();
+                break;
             default:
                 break;
         }
@@ -162,6 +165,10 @@ export class Mediator extends Component {
 
     dying() {
         this.stateMachine.changeState(CharacterState.DYING);
+    }
+
+    shooting() {
+        this.stateMachine.changeState(CharacterState.SHOOTING);
     }
 
     start() {

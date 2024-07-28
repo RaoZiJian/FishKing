@@ -60,6 +60,7 @@ export class Actor {
             this.gridBlock = this.assignNumber(this.cfg?.gridBlock);
             this.precise = this.assignNumber(this.cfg?.precise);
             this.taunt = this.assignNumber(this.cfg?.taunt);
+            this.attackType = this.assignNumber(this.cfg?.attackType);
             const mainSkillId = this.assignNumber(this.cfg?.mainSkill);
             if (mainSkillId && mainSkillId != 0) {
                 let skillCfg = GameTsCfg.skills[mainSkillId];
@@ -116,6 +117,17 @@ export class Actor {
     }
     public set name(value: string) {
         this._name = value;
+    }
+
+    /**
+     * 攻击力类型：1近战，2远程，3治疗
+     */
+    private _attackType: number;
+    public get attackType(): number {
+        return this._attackType;
+    }
+    public set attackType(value: number) {
+        this._attackType = value;
     }
 
     /**
