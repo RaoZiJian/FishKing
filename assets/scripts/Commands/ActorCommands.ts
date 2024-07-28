@@ -85,6 +85,8 @@ export class AttackCommand extends Command {
         const damage = (attack - defence) > 0 ? attack - defence : 0;
 
         this.attacker.scheduleOnce(() => {
+            const currentRage = this.attacker.getRage() + 50 > 100 ? 100 : this.attacker.getRage() + 50;
+            this.attacker.setRage(currentRage);
             this.complete();
         }, attackDuration);
 
@@ -198,14 +200,23 @@ export class MainSkillCommand extends Command {
     }
 
     execute(): void {
-        this.skill.attacker.changeState(CharacterState.CASTING);
-        this.skill.useSkill();
-        this.skill.attacker.scheduleOnce(() => {
-            if (!this.skill.skillData.NeedMove) {
-                this.skill.attacker.changeState(CharacterState.IDLE);
-            }
+        const rageCost = this.skill.skillData.RageCost;
+        const currentRage = this.skill.attacker.getRage();
+        if (rageCost > currentRage) {
             this.complete();
-        }, this.duration);
+        } else {
+            this.skill.attacker.changeState(CharacterState.CASTING);
+            this.skill.useSkill();
+            this.skill.attacker.scheduleOnce(() => {
+                if (!this.skill.skillData.NeedMove) {
+                    this.skill.attacker.changeState(CharacterState.IDLE);
+                }
+
+                this.skill.attacker.setRage(currentRage - rageCost);
+                this.complete();
+            }, this.duration);
+        }
+
     }
 }
 

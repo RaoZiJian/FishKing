@@ -194,12 +194,16 @@ export class Battle extends Component {
     }
 
     canUseSkill(attacker: Mediator): boolean {
-
         if (attacker.actor.mainSkill) {
-            return true;
+            if(attacker.actor.rage>=attacker.actor.mainSkill.RageCost){
+                return true;
+            }else{
+                return false;
+            }
         }
         return false;
     }
+
 
     sortAliveActorByTaunt(team: Array<Mediator>) {
         let aliveActors = this.getAliveActors(team);

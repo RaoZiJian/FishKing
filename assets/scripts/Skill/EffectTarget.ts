@@ -1,11 +1,10 @@
 import { _decorator, Component, Node } from 'cc';
 import { Buff } from './Buff';
-import { EventBus } from './EventBus';
 import { Mediator } from '../Mediator/Mediator';
 const { ccclass } = _decorator;
 
 @ccclass('EffectTarget')
-export class EffectTarget extends EventBus {
+export class EffectTarget {
     buffList: Buff[] = [];
 
     private _mediator: Mediator;
@@ -17,7 +16,6 @@ export class EffectTarget extends EventBus {
     }
 
     constructor(mediator: Mediator) {
-        super();
         this.mediator = mediator;
     }
 

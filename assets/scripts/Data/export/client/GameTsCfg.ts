@@ -9,7 +9,7 @@ export default {
       "defense": 5,
       "speed": 1,
       "taunt": 10,
-      "mainSkill": 10002,
+      "mainSkill": 2,
       "damageIncrease": "",
       "damageDecrease": "",
       "skillDamage": "",
@@ -90,7 +90,7 @@ export default {
       "defense": 5,
       "speed": 4,
       "taunt": 10,
-      "mainSkill": 10002,
+      "mainSkill": 2,
       "damageIncrease": "",
       "damageDecrease": "",
       "skillDamage": "",
@@ -117,7 +117,7 @@ export default {
       "defense": 5,
       "speed": 5,
       "taunt": 10,
-      "mainSkill": 10001,
+      "mainSkill": 1,
       "damageIncrease": "",
       "damageDecrease": "",
       "skillDamage": "",
@@ -144,7 +144,7 @@ export default {
       "defense": 5,
       "speed": 6,
       "taunt": 10,
-      "mainSkill": 10001,
+      "mainSkill": 1,
       "damageIncrease": "",
       "damageDecrease": "",
       "skillDamage": "",
@@ -161,6 +161,24 @@ export default {
       "attackAfterShake": "",
       "gridBlock": "",
       "precise": ""
+    }
+  },
+  "skills": {
+    "1": {
+      "id": 1,
+      "name": "Taunt",
+      "rageCost": 60,
+      "coolDown": 5,
+      "needMove": -1,
+      "value": 10
+    },
+    "2": {
+      "id": 2,
+      "name": "JumpHit",
+      "rageCost": 100,
+      "coolDown": 10,
+      "needMove": 1,
+      "value": ""
     }
   }
 };

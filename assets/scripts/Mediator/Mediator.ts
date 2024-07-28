@@ -68,6 +68,17 @@ export class Mediator extends Component {
         }
     }
 
+    getRage():number{
+        return this.actor.rage;
+    }
+
+    setRage(value:number):void{
+        if (value != this.actor.hp) {
+            this.actor.rage = value;
+            this.updateRageBar();
+        }
+    }
+
     /**
      * 默认朝向向右，如果需要单位向左，需要调用此方法
      */

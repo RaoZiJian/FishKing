@@ -1,15 +1,14 @@
 import { log } from "cc";
-import { SkillData } from "../Data/SkillData";
 import { Mediator } from "../Mediator/Mediator";
-import { JumpHitSkill, TauntSkill } from "./MainSkill";
+import { JumpHitSkill, SkillData, TauntSkill } from "./MainSkill";
 
 export class MainSkillFactory {
     static createMainSkill(skill: SkillData, caster: Mediator, targets: Mediator[]) {
         switch (skill.Id) {
-            case 10001:
+            case 1:
                 return new TauntSkill(skill, caster);
                 break;
-            case 10002:
+            case 2:
                 return new JumpHitSkill(skill, caster, targets);
             default:
                 log("can not find this skill " + skill.Id);

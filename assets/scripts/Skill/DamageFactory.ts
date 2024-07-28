@@ -1,6 +1,4 @@
 import { instantiate, Prefab, resources, Vec3 } from "cc";
-import { SkillData } from "../Data/SkillData";
-import { Buff } from "./Buff";
 import { RES_URL } from "../ResourceUrl";
 import { Mediator } from "../Mediator/Mediator";
 import { hitAnimation } from "./SkillAnimation/hitAnimation";

@@ -1,4 +1,5 @@
-import { SkillData, skillDataList } from "../Data/SkillData";
+import GameTsCfg from "../Data/export/client/GameTsCfg";
+import { SkillData } from "../Skill/MainSkill";
 
 export class ActorId {
 
@@ -61,12 +62,23 @@ export class Actor {
             this.taunt = this.assignNumber(this.cfg?.taunt);
             const mainSkillId = this.assignNumber(this.cfg?.mainSkill);
             if (mainSkillId && mainSkillId != 0) {
-                let searchMainSkill = skillDataList.filter((skill) => skill.Id == mainSkillId)
-                if (searchMainSkill && searchMainSkill.length > 0) {
-                    this.mainSkill = searchMainSkill[0];
+                let skillCfg = GameTsCfg.skills[mainSkillId];
+                if (skillCfg) {
+                    this.mainSkill = this.parseSkill(skillCfg);
                 }
             }
         }
+    }
+
+    protected parseSkill(cfg): SkillData {
+        const skill = new SkillData();
+        skill.Id = cfg.id;
+        skill.CoolDown = cfg.coolDown;
+        skill.Name = cfg.name;
+        skill.NeedMove = cfg.needMove == -1 ? false : true;
+        skill.Value = cfg.value;
+        skill.RageCost = cfg.rageCost;
+        return skill;
     }
 
     private assignNumber(value: any): number {

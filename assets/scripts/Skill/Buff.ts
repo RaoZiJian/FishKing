@@ -1,7 +1,7 @@
 import { _decorator } from 'cc';
 import { EffectTarget } from './EffectTarget';
 import { Effect, EffectContainer, SingleTauntEffect } from './Effect';
-import { SkillData } from '../Data/SkillData';
+import { SkillData } from './MainSkill';
 
 const { ccclass } = _decorator;
 
@@ -44,7 +44,7 @@ export class SingleTauntBuff extends Buff {
 
     constructor(skillData: SkillData) {
         super();
-        this.tauntEffect = new SingleTauntEffect(skillData.Value[0]);
+        this.tauntEffect = new SingleTauntEffect(skillData.Value);
         this.tauntDuration = skillData.CoolDown;
     }
 

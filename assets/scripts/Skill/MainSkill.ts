@@ -1,8 +1,16 @@
 import { AnimationComponent, instantiate, log, Prefab, resources, tween, Vec3 } from "cc";
-import { SkillData } from "../Data/SkillData";
 import { Mediator } from "../Mediator/Mediator";
 import { HurtCommand } from "../Commands/ActorCommands";
 import { SingleTauntBuff } from "./Buff";
+
+export class SkillData {
+    Id: number;
+    Name: string;
+    CoolDown: number;
+    Value: number;
+    NeedMove: boolean;
+    RageCost:number;
+}
 
 export abstract class MainSkill {
 
@@ -175,7 +183,7 @@ export class TauntSkill extends MainSkill {
     useSkill(): void {
         this.tauntBuff.work(this.attacker.effectTarget);
         let addBuffAni = this.attacker.addBuffAni;
-        addBuffAni.text = "嘲讽+" + this.skillData.Value[0];
+        addBuffAni.text = "嘲讽+" + this.skillData.Value;
         addBuffAni.reverse = this.attacker.isDirecationReverse;
         addBuffAni.duration = this.duration;
         addBuffAni.playBuffAnimation();
