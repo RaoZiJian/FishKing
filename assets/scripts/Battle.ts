@@ -1,7 +1,7 @@
 import { _decorator, Canvas, Component, director, instantiate, log, Node, Prefab, resources, UIOpacity, UITransform, Vec3 } from 'cc';
 import { Mediator } from './Mediator/Mediator';
 import { Command, CommandQueue } from './Commands/Command';
-import { MeleeAttackCommand, MainSkillCommand, MoveCommand, RangedAttackCommand } from './Commands/ActorCommands';
+import { MeleeAttackCommand, MainSkillCommand, MoveCommand, RangedAttackCommand, HealCommand } from './Commands/ActorCommands';
 import { AttackType, Constants } from './Constants';
 import { RES_URL } from './ResourceUrl';
 import { CrabMediator } from './Mediator/CrabMediator';
@@ -12,28 +12,19 @@ import { OctopusMediator } from './Mediator/OctopusMediator';
 import { ZhangLiaoMediator } from './Mediator/ZhangLiaoMediator';
 import { MainSkillFactory } from './Skill/MainSkillFactory';
 import { HuangZhongMediator } from './Mediator/HuangZhongMediator';
+import { XiaoQiaoMediator } from './Mediator/XiaoQiaoMediator';
+import GameTsCfg from './Data/export/client/GameTsCfg';
+import { Utils } from './Utils';
 const { ccclass, property } = _decorator;
 
 @ccclass('Battle')
 export class Battle extends Component {
 
-    @property(Node)
-    leftFish1: Node;
+    @property({ type: [Node] })
+    rightFishs: Node[] = [];
 
-    @property(Node)
-    leftFish2: Node;
-
-    @property(Node)
-    leftFish3: Node;
-
-    @property(Node)
-    rightFish1: Node;
-
-    @property(Node)
-    rightFish2: Node;
-
-    @property(Node)
-    rightFish3: Node;
+    @property({ type: [Node] })
+    leftFishs: Node[] = [];
 
     @property(UIOpacity)
     loading: UIOpacity;
@@ -54,18 +45,23 @@ export class Battle extends Component {
         this._teamRight = value;
     }
 
-    private _commandLog: Array<Command> = [];
-    public get commandLog(): Array<Command> {
-        return this._commandLog;
-    }
-
     private _resourceLoaded: number = 0;
     private _allPrefabs: number = 0;
     private _battleNotBegin: boolean = true;
 
     protected onLoad(): void {
         this._fetchMyFishes();
+        this._fetchCurrentStage();
     }
+
+    private _currentStage: number;
+    public get currentStage(): number {
+        return this._currentStage;
+    }
+    public set currentStage(value: number) {
+        this._currentStage = value;
+    }
+
 
     _fetchMyFishes() {
         // 从服务器拉取数据，目前使用假数据
@@ -78,47 +74,55 @@ export class Battle extends Component {
         // })
     }
 
+    _fetchCurrentStage() {
+        // 从服务器拉取数据，目前使用假数据
+        // fetch("http://127.0.0.1:8080").then((response: Response) => {
+        //     if(response){
+        //         this.currentStage = response.currentStage;
+        //     }
+        // }).then((value) => {
+        //     console.log(value);
+        // })
+    }
+
     start() {
         this.loading.opacity = 255;
+        this.currentStage = 1;
         this.initMyFishes();
         this.initEnemyFishes();
     }
 
     initMyFishes() {
-        this._allPrefabs = 6;
-        let canvas = director.getScene().getComponentInChildren(Canvas);
-        let parent = canvas.node.getChildByName('BattleField');
-
         resources.load(RES_URL.huangzhongActor, Prefab, (error, prefab) => {
             if (prefab) {
                 let actor = instantiate(prefab);
                 if (actor) {
-                    parent.addChild(actor);
-                    actor.position = this.leftFish1.position;
+                    this.node.addChild(actor);
+                    actor.position = this.leftFishs[0].position;
                     this.teamLeft.push(actor.getComponent(HuangZhongMediator));
                     this._resourceLoaded++;
                 }
             }
         });
 
-        // resources.load(RES_URL.crabActor, Prefab, (error, prefab) => {
-        //     if (prefab) {
-        //         let actor = instantiate(prefab);
-        //         if (actor) {
-        //             parent.addChild(actor);
-        //             actor.position = this.leftFish1.position;
-        //             this.teamLeft.push(actor.getComponent(CrabMediator));
-        //             this._resourceLoaded++;
-        //         }
-        //     }
-        // });
+        resources.load(RES_URL.crabActor, Prefab, (error, prefab) => {
+            if (prefab) {
+                let actor = instantiate(prefab);
+                if (actor) {
+                    this.node.addChild(actor);
+                    actor.position = this.leftFishs[1].position;
+                    this.teamLeft.push(actor.getComponent(CrabMediator));
+                    this._resourceLoaded++;
+                }
+            }
+        });
 
         resources.load(RES_URL.zhaoYunActor, Prefab, (error, prefab) => {
             if (prefab) {
                 let actor = instantiate(prefab);
                 if (actor) {
-                    parent.addChild(actor);
-                    actor.position = this.leftFish2.position;
+                    this.node.addChild(actor);
+                    actor.position = this.leftFishs[2].position;
                     this.teamLeft.push(actor.getComponent(ZhaoYunMediator));
                     this._resourceLoaded++;
                 }
@@ -129,9 +133,21 @@ export class Battle extends Component {
             if (prefab) {
                 let actor = instantiate(prefab);
                 if (actor) {
-                    parent.addChild(actor);
-                    actor.position = this.leftFish3.position;
+                    this.node.addChild(actor);
+                    actor.position = this.leftFishs[3].position;
                     this.teamLeft.push(actor.getComponent(LvMengMediator));
+                    this._resourceLoaded++;
+                }
+            }
+        });
+
+        resources.load(RES_URL.xiaoqiaoActor, Prefab, (error, prefab) => {
+            if (prefab) {
+                let actor = instantiate(prefab);
+                if (actor) {
+                    this.node.addChild(actor);
+                    actor.position = this.leftFishs[4].position;
+                    this.teamLeft.push(actor.getComponent(XiaoQiaoMediator));
                     this._resourceLoaded++;
                 }
             }
@@ -139,51 +155,30 @@ export class Battle extends Component {
     }
 
     initEnemyFishes() {
-        this._allPrefabs = 6;
-        let canvas = director.getScene().getComponentInChildren(Canvas);
-        let parent = canvas.node.getChildByName('BattleField');
+        const stageCfg = GameTsCfg.stage[this.currentStage];
+        const actorIds = Utils.parseString(stageCfg.actors);
 
-        resources.load(RES_URL.piranhaActor, Prefab, (error, prefab) => {
-            if (prefab) {
-                let actor = instantiate(prefab);
-                if (actor) {
-                    parent.addChild(actor);
-                    actor.position = this.rightFish1.position;
-                    let medaitor = actor.getComponent(PiranhaMediator);
-                    medaitor.setDireactionReverse();
-                    this.teamRight.push(medaitor);
-                    this._resourceLoaded++;
-                }
+        for (let index = 0; index < actorIds.length; index++) {
+            const id = actorIds[index];
+            const url = GameTsCfg.actor[id]?.prefab;
+            if (url) {
+                resources.load(url, Prefab, (error, prefab) => {
+                    if (prefab) {
+                        let actor = instantiate(prefab);
+                        if (actor) {
+                            this.node.addChild(actor);
+                            actor.position = this.rightFishs[index].position;
+                            let medaitor = actor.getComponent(Mediator);
+                            medaitor.setDireactionReverse();
+                            this.teamRight.push(medaitor);
+                            this._resourceLoaded++;
+                        }
+                    }
+                });
             }
-        });
+        }
 
-        resources.load(RES_URL.octopusActor, Prefab, (error, prefab) => {
-            if (prefab) {
-                let actor = instantiate(prefab);
-                if (actor) {
-                    parent.addChild(actor);
-                    actor.position = this.rightFish2.position;
-                    let medaitor = actor.getComponent(OctopusMediator);
-                    medaitor.setDireactionReverse();
-                    this.teamRight.push(medaitor);
-                    this._resourceLoaded++;
-                }
-            }
-        });
-
-        resources.load(RES_URL.zhangliaoActor, Prefab, (error, prefab) => {
-            if (prefab) {
-                let actor = instantiate(prefab);
-                if (actor) {
-                    parent.addChild(actor);
-                    actor.position = this.rightFish3.position;
-                    let medaitor = actor.getComponent(ZhangLiaoMediator);
-                    medaitor.setDireactionReverse();
-                    this.teamRight.push(medaitor);
-                    this._resourceLoaded++;
-                }
-            }
-        });
+        this._allPrefabs = 5 + actorIds.length;
     }
 
     getAliveActors(team: Array<Mediator>) {
@@ -192,6 +187,11 @@ export class Battle extends Component {
 
     getNextActor(mediators: Mediator[]) {
         return mediators.find(mediator => mediator.isAlive);
+    }
+
+    getLowestHPActor(medaitors: Mediator[]): Mediator {
+        let sortActors = medaitors.sort((a, b) => (a.actor.hp / a.actor.cfg.hp) - (b.actor.hp / b.actor.cfg.hp));
+        return sortActors[0];
     }
 
     removeDeadActors(targets: Mediator[]): Mediator[] {
@@ -286,9 +286,24 @@ export class Battle extends Component {
                         duration += attack.duration;
                         duration += moveBack.duration;
                     } else if (attacker.actor.attackType == AttackType.RangedAttack) {
-                        const shooting = new RangedAttackCommand(attacker, defender);
+                        let shouldReverse = false;
+                        if (isLeft) {
+                            shouldReverse = true;
+                        }
+                        const shooting = new RangedAttackCommand(attacker, defender, RES_URL.hzArrow, shouldReverse);
                         duration += shooting.duration;
                         combatCommands.push(shooting);
+                    } else {
+                        let lowestHPActor: Mediator = null;
+                        if (isLeft) {
+                            lowestHPActor = this.getLowestHPActor(leftAliveActors);
+                        } else {
+                            lowestHPActor = this.getLowestHPActor(rightAliveActors);
+                        }
+
+                        const heal = new HealCommand(attacker, lowestHPActor);
+                        duration += heal.duration;
+                        combatCommands.push(heal);
                     }
                 }
             }
@@ -297,7 +312,7 @@ export class Battle extends Component {
             commandQueue.execute();
 
             this.scheduleOnce(() => {
-                actors = actors.filter((element) => element.actor.id !== attacker.actor.id);
+                actors = actors.filter((element) => element.actor.uuuId !== attacker.actor.uuuId);
                 actors = this.removeDeadActors(actors);
                 this.teamLeft = this.removeDeadActors(this.teamLeft);
                 this.teamRight = this.removeDeadActors(this.teamRight);

@@ -3,7 +3,7 @@ export const Constants = {
     /**
      * 进攻所需要的移动时间，单位秒
      */
-    AttakingWalkTime: 2,
+    AttakingWalkTime: 1,
 
     /**
      * 死亡淡出时间
@@ -19,6 +19,7 @@ export const FishActorId = {
     ZhangLiao: 5,
     ZhaoYun: 6,
     HuangZhong: 7,
+    XiaoQiao: 8,
 }
 
 export const AttackType = {

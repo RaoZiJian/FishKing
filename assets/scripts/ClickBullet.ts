@@ -54,6 +54,9 @@ export class ClickBullet extends Component {
     @property({ type: Node })
     public bullet: Node;
 
+    setReverse() {
+        this.bullet.scale = new Vec3(this.bullet.scale.x * -1, this.bullet.scale.y, this.bullet.scale.z);
+    }
 
     start() {
     }

@@ -9,6 +9,7 @@ export const RES_URL = {
     octopusActor: 'fishes/Octopus/OctopusActor',
     zhangliaoActor: 'fishes/ZhangLiao/ZhangLiaoActor',
     huangzhongActor:'fishes/HuangZhong/HuangZhongActor',
+    xiaoqiaoActor:'fishes/XiaoQiao/XiaoQiaoActor',
     addBuffAniPrefab: 'effects/buff/addBuff',
     damagePrefab:'effects/buff/hit',
     hzArrow:'fishes/HuangZhong/Shooting/HZArrow'

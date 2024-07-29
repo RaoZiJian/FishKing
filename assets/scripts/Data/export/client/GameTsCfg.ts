@@ -7,6 +7,7 @@ export default {
       "rage": 100,
       "attack": 185,
       "attackType": 1,
+      "prefab": "fishes/LvMeng/LvMengActor",
       "defense": 5,
       "speed": 1,
       "taunt": 10,
@@ -35,6 +36,7 @@ export default {
       "rage": 100,
       "attack": 100,
       "attackType": 1,
+      "prefab": "fishes/Crab/CrabActor",
       "defense": 5,
       "speed": 2,
       "taunt": 10,
@@ -63,6 +65,7 @@ export default {
       "rage": 100,
       "attack": 70,
       "attackType": 1,
+      "prefab": "fishes/Piranha/PiranhaActor",
       "defense": 5,
       "speed": 3,
       "taunt": 10,
@@ -91,6 +94,7 @@ export default {
       "rage": 100,
       "attack": 80,
       "attackType": 1,
+      "prefab": "fishes/Octopus/OctopusActor",
       "defense": 5,
       "speed": 4,
       "taunt": 10,
@@ -119,6 +123,7 @@ export default {
       "rage": 100,
       "attack": 190,
       "attackType": 1,
+      "prefab": "fishes/ZhangLiao/ZhangLiaoActor",
       "defense": 5,
       "speed": 5,
       "taunt": 10,
@@ -147,6 +152,7 @@ export default {
       "rage": 100,
       "attack": 200,
       "attackType": 1,
+      "prefab": "fishes/ZhaoYun/ZhaoYunActor",
       "defense": 5,
       "speed": 6,
       "taunt": 10,
@@ -175,9 +181,39 @@ export default {
       "rage": 100,
       "attack": 480,
       "attackType": 2,
+      "prefab": "fishes/HuangZhong/HuangZhongActor",
       "defense": 3,
       "speed": 8,
       "taunt": 9,
+      "mainSkill": "",
+      "damageIncrease": "",
+      "damageDecrease": "",
+      "skillDamage": "",
+      "skillDecrease": "",
+      "amorDecrease": "",
+      "amorDecreaseResistance": "",
+      "criticalHitRate": "",
+      "criticalResistance": "",
+      "criticalDamage": "",
+      "criticalDamageResistance": "",
+      "controlHit": "",
+      "controlResistance": "",
+      "attackShake": "",
+      "attackAfterShake": "",
+      "gridBlock": "",
+      "precise": ""
+    },
+    "8": {
+      "id": 8,
+      "name": "小乔",
+      "hp": 1000,
+      "rage": 100,
+      "attack": 50,
+      "attackType": 3,
+      "prefab": "fishes/XiaoQiao/XiaoQiaoActor",
+      "defense": 4,
+      "speed": 3,
+      "taunt": 10,
       "mainSkill": "",
       "damageIncrease": "",
       "damageDecrease": "",
@@ -213,6 +249,28 @@ export default {
       "coolDown": 10,
       "needMove": 1,
       "value": ""
+    }
+  },
+  "stage": {
+    "1": {
+      "id": 1,
+      "actors": "1,1,1"
+    },
+    "2": {
+      "id": 2,
+      "actors": "2,4,5"
+    },
+    "3": {
+      "id": 3,
+      "actors": "4,5,6,1"
+    },
+    "4": {
+      "id": 4,
+      "actors": "7,8,3,2,4"
+    },
+    "5": {
+      "id": 5,
+      "actors": "6,2,3,1,8"
     }
   }
 };

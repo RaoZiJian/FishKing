@@ -132,6 +132,9 @@ export class Mediator extends Component {
             case CharacterState.SHOOTING:
                 this.shooting();
                 break;
+            case CharacterState.HEALING:
+                this.healing();
+                break;
             default:
                 break;
         }
@@ -173,6 +176,10 @@ export class Mediator extends Component {
 
     start() {
         this.stateMachine = this.getComponent(ActorStateMichine);
+    }
+
+    healing() {
+        this.stateMachine.changeState(CharacterState.HEALING);
     }
 
     update(deltaTime: number) {

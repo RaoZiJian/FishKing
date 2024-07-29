@@ -45,5 +45,37 @@ export class SingleTauntEffect implements Effect {
             this.target.mediator.actor.taunt -= this.taunt;
         }
     }
+}
+
+export class SingleHealingEffect implements Effect {
+
+    private _healingHp: number = 0;
+    public get healingHp(): number {
+        return this._healingHp;
+    }
+    public set healingHp(value: number) {
+        this._healingHp = value;
+    }
+
+    private _target: EffectTarget;
+    public get target(): EffectTarget {
+        return this._target;
+    }
+    public set target(value: EffectTarget) {
+        this._target = value;
+    }
+
+    constructor(healingHp: number) {
+        this.healingHp = healingHp;
+    }
+
+    cast(target: EffectTarget): void {
+        this.target = target;
+        const currentHp = this.target.mediator.actor.hp + this.healingHp;
+        this.target.mediator.setHP(currentHp > this.target.mediator.actor.cfg.hp ? this.target.mediator.actor.cfg.hp : currentHp);
+    }
+    remove(): void {
+
+    }
 
 }

@@ -2,10 +2,10 @@ import { director, instantiate, Prefab, resources, tween, UIOpacity, Vec3 } from
 import { CharacterState } from '../StateMachine/ActorStateMachine';
 import { Command, FireBulletCommand } from './Command';
 import { Mediator } from '../Mediator/Mediator';
-import { Constants } from '../Constants';
 import { MainSkill } from '../Skill/MainSkill';
 import { DamageFactory } from '../Skill/DamageFactory';
-import { RES_URL } from '../ResourceUrl';
+import { ClickBullet } from '../ClickBullet';
+import { SingleHealingBuff } from '../Skill/Buff';
 
 export class MoveCommand extends Command {
 
@@ -84,6 +84,9 @@ export class MeleeAttackCommand extends Command {
         const attack = this.attacker.actor.attack;
         const defence = this.defender.actor.defense;
         const damage = (attack - defence) > 0 ? attack - defence : 0;
+        const hp = this.defender.actor.hp;
+        const currentHp = (hp - damage) > 0 ? hp - damage : 0;
+        const isDead = currentHp == 0;
 
         this.attacker.scheduleOnce(() => {
             const currentRage = this.attacker.getRage() + 50 > 100 ? 100 : this.attacker.getRage() + 50;
@@ -91,9 +94,15 @@ export class MeleeAttackCommand extends Command {
             this.complete();
         }, attackDuration);
 
+
         this.defender.scheduleOnce(() => {
-            const hurt = new HurtCommand(this.attacker, this.defender, damage);
-            hurt.execute();
+            if (isDead) {
+                const deadCommand = new DeadCommand(this.defender);
+                deadCommand.execute();
+            } else {
+                const hurt = new HurtCommand(this.attacker, this.defender, damage);
+                hurt.execute();
+            }
         }, this.attacker.getAnimationDuration(CharacterState.ATTACKING) * 0.5)
     }
 }
@@ -116,34 +125,69 @@ export class RangedAttackCommand extends Command {
         this._defender = value;
     }
 
-    constructor(attacker: Mediator, target: Mediator) {
+    private _shouldReverse: boolean;
+    public get shouldReverse(): boolean {
+        return this._shouldReverse;
+    }
+    public set shouldReverse(value: boolean) {
+        this._shouldReverse = value;
+    }
+
+    private _arrowRes: string;
+    public get arrowRes(): string {
+        return this._arrowRes;
+    }
+    public set arrowRes(value: string) {
+        this._arrowRes = value;
+    }
+
+    constructor(attacker: Mediator, target: Mediator, arrowRes: string, shouldReverse: boolean) {
         super();
         this.attacker = attacker
         this.defender = target;
+        this.shouldReverse = shouldReverse;
+        this.arrowRes = arrowRes;
         this.duration = this.attacker.getAnimationDuration(CharacterState.SHOOTING) + this.attacker.actor.attackShake;
     }
 
     execute(): void {
         this.attacker.changeState(CharacterState.SHOOTING);
-        const shooting = this.duration;
         const attack = this.attacker.actor.attack;
         const defence = this.defender.actor.defense;
         const damage = (attack - defence) > 0 ? attack - defence : 0;
+        const hp = this.defender.actor.hp;
+        const currentHp = (hp - damage) > 0 ? hp - damage : 0;
+        const isDead = currentHp == 0;
         const canvas = director.getScene().getChildByName('Canvas');
 
-        resources.load(RES_URL.hzArrow, Prefab, (error, prefab) => {
+        resources.load(this.arrowRes, Prefab, (error, prefab) => {
             if (prefab) {
                 let arrow = instantiate(prefab);
+                let bullet = arrow.getComponent(ClickBullet);
+                if (this.shouldReverse) {
+                    bullet.setReverse();
+                }
                 canvas.addChild(arrow);
+                let shootingDuration = 0
+
                 const shootingCommand = new FireBulletCommand(this.attacker.node.worldPosition, this.defender.node, arrow, () => {
-                    const hurt = new HurtCommand(this.attacker, this.defender, damage);
-                    hurt.execute();
+                    if (isDead) {
+                        const deadCommand = new DeadCommand(this.defender);
+                        deadCommand.execute();
+                        shootingDuration += deadCommand.duration;
+                    } else {
+                        const hurt = new HurtCommand(this.attacker, this.defender, damage);
+                        hurt.execute();
+                        shootingDuration += hurt.duration;
+                    }
+
+                    this.attacker.scheduleOnce(() => {
+                        this.attacker.changeState(CharacterState.IDLE);
+                        this.complete();
+                    }, shootingDuration);
                 });
+                shootingDuration += shootingCommand.duration;
                 shootingCommand.execute();
-                this.attacker.scheduleOnce(() => {
-                    this.attacker.changeState(CharacterState.IDLE);
-                    this.complete();
-                }, this.duration);
             }
         });
     }
@@ -234,6 +278,51 @@ export class DeadCommand extends Command {
                 .start();
         }
     }
+}
+
+export class HealCommand extends Command {
+
+    private _doctor: Mediator;
+    public get doctor(): Mediator {
+        return this._doctor;
+    }
+    public set doctor(value: Mediator) {
+        this._doctor = value;
+    }
+
+    private _target: Mediator;
+    public get target(): Mediator {
+        return this._target;
+    }
+    public set target(value: Mediator) {
+        this._target = value;
+    }
+
+    constructor(doctor: Mediator, target: Mediator) {
+        super();
+        this.doctor = doctor;
+        this.target = target;
+        this.duration = this.doctor.getAnimationDuration(CharacterState.HEALING);
+    }
+
+    execute(): void {
+        this.doctor.changeState(CharacterState.HEALING);
+        const healingBuff = new SingleHealingBuff(this.doctor.actor.attack);
+        healingBuff.install(this.target.effectTarget);
+        healingBuff.work(this.target.effectTarget);
+
+        let addBuffAni = this.target.addBuffAni;
+        addBuffAni.text = "HP+" + this.doctor.actor.attack;
+        addBuffAni.reverse = this.doctor.isDirecationReverse;
+        addBuffAni.duration = this.duration;
+        addBuffAni.playBuffAnimation();
+
+        this.doctor.scheduleOnce(() => {
+            this.doctor.changeState(CharacterState.IDLE);
+            this.complete();
+        }, this.duration)
+    }
+
 }
 
 export class MainSkillCommand extends Command {
