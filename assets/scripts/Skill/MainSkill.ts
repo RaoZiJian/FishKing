@@ -1,4 +1,4 @@
-import { AnimationComponent, instantiate, log, Prefab, resources, tween, Vec3 } from "cc";
+import { AnimationComponent, AudioClip, instantiate, log, Prefab, resources, tween, Vec3 } from "cc";
 import { Mediator } from "../Mediator/Mediator";
 import { HurtCommand } from "../Commands/ActorCommands";
 import { SingleTauntBuff } from "./Buff";
@@ -9,7 +9,8 @@ export class SkillData {
     CoolDown: number;
     Value: number;
     NeedMove: boolean;
-    RageCost:number;
+    RageCost: number;
+    Audio: string;
 }
 
 export abstract class MainSkill {
@@ -131,6 +132,13 @@ export class JumpHitSkill extends MainSkill {
 
                     this.attacker.scheduleOnce(() => {
                         attackerAnimation.play(this.jumpAnimations.jumpAttack);
+                        if (this.skillData.Audio) {
+                            resources.load(this.skillData.Audio, AudioClip, (error, audioClip) => {
+                                if(audioClip){
+                                    this.attacker.audio.playOneShot(audioClip, 1);
+                                }
+                            })
+                        }
                         const damage = this.getSkillDamage();
                         this.defender[0].scheduleOnce(() => {
                             const hurt = new HurtCommand(this.attacker, this.defender[0], damage);
@@ -187,6 +195,13 @@ export class TauntSkill extends MainSkill {
         addBuffAni.reverse = this.attacker.isDirecationReverse;
         addBuffAni.duration = this.duration;
         addBuffAni.playBuffAnimation();
+        if (this.skillData.Audio) {
+            resources.load(this.skillData.Audio, AudioClip, (error, audioClip) => {
+                if(audioClip){
+                    this.attacker.audio.playOneShot(audioClip, 1);
+                }
+            })
+        }
 
         if (this._casterAnimation) {
             this._casterAnimation.play(this.tauntAniName);

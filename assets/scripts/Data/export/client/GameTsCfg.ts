@@ -8,6 +8,10 @@ export default {
       "attack": 185,
       "attackType": 1,
       "prefab": "fishes/LvMeng/LvMengActor",
+      "attakingAudio": "attacking1",
+      "shootingAudio": "",
+      "healingAudio": "",
+      "dyingAudio": "dying2",
       "defense": 5,
       "speed": 1,
       "taunt": 10,
@@ -37,6 +41,10 @@ export default {
       "attack": 100,
       "attackType": 1,
       "prefab": "fishes/Crab/CrabActor",
+      "attakingAudio": "attacking2",
+      "shootingAudio": "",
+      "healingAudio": "",
+      "dyingAudio": "dying3",
       "defense": 5,
       "speed": 2,
       "taunt": 10,
@@ -61,11 +69,15 @@ export default {
     "3": {
       "id": 3,
       "name": "水虎鱼",
-      "hp": 1800,
+      "hp": 700,
       "rage": 100,
       "attack": 70,
       "attackType": 1,
       "prefab": "fishes/Piranha/PiranhaActor",
+      "attakingAudio": "attacking3",
+      "shootingAudio": "",
+      "healingAudio": "",
+      "dyingAudio": "dying4",
       "defense": 5,
       "speed": 3,
       "taunt": 10,
@@ -95,6 +107,10 @@ export default {
       "attack": 80,
       "attackType": 1,
       "prefab": "fishes/Octopus/OctopusActor",
+      "attakingAudio": "attacking4",
+      "shootingAudio": "",
+      "healingAudio": "",
+      "dyingAudio": "dying2",
       "defense": 5,
       "speed": 4,
       "taunt": 10,
@@ -124,6 +140,10 @@ export default {
       "attack": 190,
       "attackType": 1,
       "prefab": "fishes/ZhangLiao/ZhangLiaoActor",
+      "attakingAudio": "attacking5",
+      "shootingAudio": "",
+      "healingAudio": "",
+      "dyingAudio": "dying2",
       "defense": 5,
       "speed": 5,
       "taunt": 10,
@@ -153,6 +173,10 @@ export default {
       "attack": 200,
       "attackType": 1,
       "prefab": "fishes/ZhaoYun/ZhaoYunActor",
+      "attakingAudio": "attacking1",
+      "shootingAudio": "",
+      "healingAudio": "",
+      "dyingAudio": "dying2",
       "defense": 5,
       "speed": 6,
       "taunt": 10,
@@ -182,6 +206,10 @@ export default {
       "attack": 480,
       "attackType": 2,
       "prefab": "fishes/HuangZhong/HuangZhongActor",
+      "attakingAudio": "",
+      "shootingAudio": "shootingAttack1",
+      "healingAudio": "",
+      "dyingAudio": "dying2",
       "defense": 3,
       "speed": 8,
       "taunt": 9,
@@ -208,9 +236,13 @@ export default {
       "name": "小乔",
       "hp": 1000,
       "rage": 100,
-      "attack": 50,
+      "attack": 150,
       "attackType": 3,
       "prefab": "fishes/XiaoQiao/XiaoQiaoActor",
+      "attakingAudio": "",
+      "shootingAudio": "",
+      "healingAudio": "healing1",
+      "dyingAudio": "dying1",
       "defense": 4,
       "speed": 3,
       "taunt": 10,
@@ -240,6 +272,7 @@ export default {
       "rageCost": 60,
       "coolDown": 5,
       "needMove": -1,
+      "audio": "taunt",
       "value": 10
     },
     "2": {
@@ -248,6 +281,7 @@ export default {
       "rageCost": 100,
       "coolDown": 10,
       "needMove": 1,
+      "audio": "jumpAttack",
       "value": ""
     }
   },
@@ -258,19 +292,31 @@ export default {
     },
     "2": {
       "id": 2,
-      "actors": "2,4,5"
+      "actors": "2,2,2"
     },
     "3": {
       "id": 3,
-      "actors": "4,5,6,1"
+      "actors": "3,3,3"
     },
     "4": {
       "id": 4,
-      "actors": "7,8,3,2,4"
+      "actors": "3,4,5"
     },
     "5": {
       "id": 5,
-      "actors": "6,2,3,1,8"
+      "actors": "4,5,6"
+    },
+    "6": {
+      "id": 6,
+      "actors": "7,8,2"
+    },
+    "7": {
+      "id": 7,
+      "actors": "2,3,4,5,6"
+    },
+    "8": {
+      "id": 8,
+      "actors": "8,1,2,3,4"
     }
   }
 };

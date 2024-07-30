@@ -1,4 +1,4 @@
-import { _decorator } from 'cc';
+import { _decorator, AudioClip } from 'cc';
 import { LvMengActor } from '../Actors/LvMengActor';
 import { Mediator } from './Mediator';
 import { LvMengStateMachine } from '../StateMachine/LvMengStateMachine';

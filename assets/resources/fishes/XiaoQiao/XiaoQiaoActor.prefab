@@ -44,10 +44,13 @@
       },
       {
         "__id__": 56
+      },
+      {
+        "__id__": 58
       }
     ],
     "_prefab": {
-      "__id__": 58
+      "__id__": 60
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -937,6 +940,9 @@
     "hpBar": null,
     "rageBar": null,
     "addBuffAni": null,
+    "audio": {
+      "__id__": 58
+    },
     "light": {
       "__id__": 44
     },
@@ -945,6 +951,28 @@
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "bebVsp1DhGkrVBfjrYq7/o"
+  },
+  {
+    "__type__": "cc.AudioSource",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 59
+    },
+    "_clip": null,
+    "_loop": false,
+    "_playOnAwake": false,
+    "_volume": 1,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "7bkaxGYB9Fg7wlLFZ+S9h6"
   },
   {
     "__type__": "cc.PrefabInfo",
@@ -958,13 +986,13 @@
     "instance": null,
     "targetOverrides": [
       {
-        "__id__": 59
-      },
-      {
         "__id__": 61
       },
       {
         "__id__": 63
+      },
+      {
+        "__id__": 65
       }
     ],
     "nestedPrefabInstanceRoots": [
@@ -992,7 +1020,7 @@
       "__id__": 2
     },
     "targetInfo": {
-      "__id__": 60
+      "__id__": 62
     }
   },
   {
@@ -1014,7 +1042,7 @@
       "__id__": 10
     },
     "targetInfo": {
-      "__id__": 62
+      "__id__": 64
     }
   },
   {
@@ -1036,7 +1064,7 @@
       "__id__": 18
     },
     "targetInfo": {
-      "__id__": 64
+      "__id__": 66
     }
   },
   {

@@ -1,8 +1,9 @@
-import { _decorator, Component, Node, ProgressBar, Vec3 } from 'cc';
-import { Actor } from '../Actors/Actor';
+import { _decorator, AudioClip, AudioSource, Component, log, Node, ProgressBar, resources, Vec3 } from 'cc';
+import { Actor, ActorAttackType } from '../Actors/Actor';
 import { ActorStateMichine, CharacterState } from '../StateMachine/ActorStateMachine';
 import { EffectTarget } from '../Skill/EffectTarget';
 import { addBuffAnimation } from '../Skill/SkillAnimation/addBuffAnimation';
+import { RES_URL } from '../ResourceUrl';
 const { ccclass, property } = _decorator;
 
 @ccclass('Mediator')
@@ -56,6 +57,9 @@ export class Mediator extends Component {
 
     @property(addBuffAnimation)
     addBuffAni: addBuffAnimation;
+
+    @property(AudioSource)
+    audio: AudioSource;
 
     getHP(): number {
         return this.actor.hp;
@@ -138,6 +142,8 @@ export class Mediator extends Component {
             default:
                 break;
         }
+
+        this.playAudioByStae(newState);
     }
 
     idle() {
@@ -180,6 +186,40 @@ export class Mediator extends Component {
 
     healing() {
         this.stateMachine.changeState(CharacterState.HEALING);
+    }
+
+    playAudioByStae(state) {
+        const cfg = this.actor.cfg;
+        let audioUrl = RES_URL.audioPrefix;
+        let audioName = "";
+        switch (state) {
+            case CharacterState.ATTACKING:
+                if (this.actor.attackType == ActorAttackType.Melee) {
+                    audioName = cfg.attakingAudio;
+                }
+                break;
+            case CharacterState.SHOOTING:
+                if (this.actor.attackType == ActorAttackType.Shoot) {
+                    audioName = cfg.shootingAudio;
+                }
+                break;
+            case CharacterState.HEALING:
+                if (this.actor.attackType == ActorAttackType.Heal) {
+                    audioName = cfg.healingAudio;
+                }
+                break;
+            case CharacterState.DYING:
+                audioName = cfg.dyingAudio;
+                break;
+            default:
+                break;
+        }
+
+        if (audioName != "") {
+            resources.load(audioUrl + audioName, AudioClip, (error, audioClip) => {
+                this.audio.playOneShot(audioClip, 1);
+            })
+        }
     }
 
     update(deltaTime: number) {

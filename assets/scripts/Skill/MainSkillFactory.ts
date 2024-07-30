@@ -7,7 +7,6 @@ export class MainSkillFactory {
         switch (skill.Id) {
             case 1:
                 return new TauntSkill(skill, caster);
-                break;
             case 2:
                 return new JumpHitSkill(skill, caster, targets);
             default:

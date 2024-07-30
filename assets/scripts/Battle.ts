@@ -1,20 +1,19 @@
-import { _decorator, Canvas, Component, director, instantiate, log, Node, Prefab, resources, UIOpacity, UITransform, Vec3 } from 'cc';
+import { _decorator, AudioSource, Canvas, Component, director, instantiate, log, Node, Prefab, resources, UIOpacity, UITransform, Vec3 } from 'cc';
 import { Mediator } from './Mediator/Mediator';
 import { Command, CommandQueue } from './Commands/Command';
 import { MeleeAttackCommand, MainSkillCommand, MoveCommand, RangedAttackCommand, HealCommand } from './Commands/ActorCommands';
 import { AttackType, Constants } from './Constants';
 import { RES_URL } from './ResourceUrl';
 import { CrabMediator } from './Mediator/CrabMediator';
-import { PiranhaMediator } from './Mediator/PiranhaMediator';
 import { ZhaoYunMediator } from './Mediator/ZhaoYunMediator';
 import { LvMengMediator } from './Mediator/LvMengMediator';
-import { OctopusMediator } from './Mediator/OctopusMediator';
-import { ZhangLiaoMediator } from './Mediator/ZhangLiaoMediator';
 import { MainSkillFactory } from './Skill/MainSkillFactory';
 import { HuangZhongMediator } from './Mediator/HuangZhongMediator';
 import { XiaoQiaoMediator } from './Mediator/XiaoQiaoMediator';
 import GameTsCfg from './Data/export/client/GameTsCfg';
 import { Utils } from './Utils';
+import { UIAnimation } from './UIAnimations/UIAnimation';
+import { FireBulletArea } from './FireBulletArea';
 const { ccclass, property } = _decorator;
 
 @ccclass('Battle')
@@ -28,6 +27,9 @@ export class Battle extends Component {
 
     @property(UIOpacity)
     loading: UIOpacity;
+
+    @property(FireBulletArea)
+    fireArea: FireBulletArea;
 
     private _teamLeft: Array<Mediator> = [];
     public get teamLeft(): Array<Mediator> {
@@ -90,6 +92,7 @@ export class Battle extends Component {
         this.currentStage = 1;
         this.initMyFishes();
         this.initEnemyFishes();
+        this.getComponent(AudioSource).play();
     }
 
     initMyFishes() {
@@ -203,10 +206,6 @@ export class Battle extends Component {
         return this.teamLeft.some(member => member.actor.uuuId === target.actor.uuuId)
     }
 
-    _battleLoop() {
-
-    }
-
     canUseSkill(attacker: Mediator): boolean {
         if (attacker.actor.mainSkill) {
             if (attacker.actor.rage >= attacker.actor.mainSkill.RageCost) {
@@ -218,10 +217,47 @@ export class Battle extends Component {
         return false;
     }
 
+    gotoNextStage() {
+        this.loading.opacity = 255;
+        this.currentStage = this.findNextStage(this.currentStage);
+        if (this.currentStage == -1) {
+            this.loading.opacity = 0;
+            this.showUIAnimation(10000, "游戏胜利！");
+            this.fireArea.closeFire();
+        } else {
+            this.showUIAnimation(1, "闯关成功！");
+            this._battleNotBegin = true;
+            this._resourceLoaded = 5;
+            this.initEnemyFishes();
+            this.fireArea.closeFire();
+        }
+    }
+
+    findNextStage(stage: number): number {
+        const stageCfg = GameTsCfg.stage;
+        if (stageCfg[stage + 1]) {
+            return stage + 1;
+        }
+
+        return -1;
+    }
 
     sortAliveActorByTaunt(team: Array<Mediator>) {
         let aliveActors = this.getAliveActors(team);
         return aliveActors.sort((a, b) => { return b.actor.taunt - a.actor.taunt });
+    }
+
+    private showUIAnimation(duration: number, text: string) {
+        resources.load(RES_URL.nextStageUrl, Prefab, (error, prefab) => {
+            if (prefab) {
+                let nextStageUI = instantiate(prefab);
+                let uiAnimation = nextStageUI.getComponent(UIAnimation);
+                const canvas = director.getScene().getChildByName('Canvas');
+                canvas.addChild(nextStageUI);
+                nextStageUI.setPosition(new Vec3(0, 480, 0));
+                uiAnimation.showAnimation(duration, text);
+            }
+        });
     }
 
     runBattle(actors: Mediator[]) {
@@ -286,11 +322,11 @@ export class Battle extends Component {
                         duration += attack.duration;
                         duration += moveBack.duration;
                     } else if (attacker.actor.attackType == AttackType.RangedAttack) {
-                        let shouldReverse = false;
-                        if (isLeft) {
-                            shouldReverse = true;
-                        }
-                        const shooting = new RangedAttackCommand(attacker, defender, RES_URL.hzArrow, shouldReverse);
+                        // let shouldReverse = false;
+                        // if (isLeft) {
+                        //     shouldReverse = true;
+                        // }
+                        const shooting = new RangedAttackCommand(attacker, defender, RES_URL.hzArrow, true);
                         duration += shooting.duration;
                         combatCommands.push(shooting);
                     } else {
@@ -316,11 +352,18 @@ export class Battle extends Component {
                 actors = this.removeDeadActors(actors);
                 this.teamLeft = this.removeDeadActors(this.teamLeft);
                 this.teamRight = this.removeDeadActors(this.teamRight);
-                if (actors.length === 0) {
-                    const allActors = [...this.teamLeft, ...this.teamRight];
-                    actors = this.removeDeadActors(allActors);
+                if (this.teamLeft.length == 0) {
+                    this.loading.opacity = 0;
+                    this.showUIAnimation(1000, "游戏失败！");
+                } else if (this.teamRight.length == 0) {
+                    this.gotoNextStage();
+                } else {
+                    if (actors.length === 0) {
+                        const allActors = [...this.teamLeft, ...this.teamRight];
+                        actors = this.removeDeadActors(allActors);
+                    }
+                    this.runBattle(actors);
                 }
-                this.runBattle(actors);
             }, duration);
         }
     }
@@ -331,6 +374,7 @@ export class Battle extends Component {
                 this.loading.opacity = 0;
                 this.runBattle(this.removeDeadActors([...this.teamLeft, ...this.teamRight]));
                 this._battleNotBegin = false;
+                this.fireArea.openFire();
             }
         }
     }

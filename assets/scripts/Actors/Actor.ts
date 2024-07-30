@@ -1,4 +1,5 @@
 import GameTsCfg from "../Data/export/client/GameTsCfg";
+import { RES_URL } from "../ResourceUrl";
 import { SkillData } from "../Skill/MainSkill";
 
 export class ActorId {
@@ -10,6 +11,12 @@ export class ActorId {
         this._id++;
         return this._id;
     }
+}
+
+export const ActorAttackType = {
+    Melee: 1,
+    Shoot: 2,
+    Heal: 3
 }
 
 export class Actor {
@@ -79,6 +86,9 @@ export class Actor {
         skill.NeedMove = cfg.needMove == -1 ? false : true;
         skill.Value = cfg.value;
         skill.RageCost = cfg.rageCost;
+        if (cfg.audio != "") {
+            skill.Audio = RES_URL.audioPrefix + cfg.audio;
+        }
         return skill;
     }
 
@@ -120,7 +130,7 @@ export class Actor {
     }
 
     /**
-     * 攻击力类型：1近战，2远程，3治疗
+     * ActorAttackType 攻击力类型：1近战，2远程，3治疗
      */
     private _attackType: number;
     public get attackType(): number {
